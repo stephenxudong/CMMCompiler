@@ -1,0 +1,11 @@
+real r = 10.e1;
+int aiii_;
+int 1a;
+int i = 10.11.11;
+//int i = 0;
+//int j;
+while(i<6){
+write(i);
+i=i+1;
+}
+

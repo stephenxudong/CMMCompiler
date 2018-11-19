@@ -1,0 +1,9 @@
+while(i>0){
+    i = i+1;
+    i = j;
+}
+int j = i+1;
+read(i);
+write(i);
+
+
