@@ -7,6 +7,7 @@
 #include <fstream>
 #include <cassert>
 #include <cstdio>
+#include <cstring>
 #include "../type/tokentype.h"
 
 // 将一个字符串转化成字符序列

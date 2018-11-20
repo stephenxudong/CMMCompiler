@@ -32,7 +32,7 @@ public:
     }
     
     TreeNode* parse();
-    void printT(TreeNode* t,char* outpath=NULL);
+    void printT(TreeNode* t,char* outpath=nullptr);
     vector<string> error() const{
         return errors;
     }
@@ -41,7 +41,7 @@ public:
 private:
     
     inline bool tokenHasNext(){
-        return this->index+1<this->tokens.size();
+        return this->index+1 < this->tokens.size();
     }
     inline void nextToken(){
         if(index==tokens.size()-1){

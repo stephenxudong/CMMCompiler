@@ -9,6 +9,8 @@
 #ifndef TreeNodeType_h
 #define TreeNodeType_h
 
+#include <string>
+using std::string;
 //namespace tnt{
 //    //节点类型，是语句还是表达式
 //    typedef enum {PROGRAM,StmtK,ExpK,Opk} NodeKind;

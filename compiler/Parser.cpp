@@ -23,9 +23,9 @@ TreeNode *Parser::parse() {
  @return syntax tree node
  */
 TreeNode *Parser::parseStmt() {
-    TreeNode* tmpNode = NULL;
+    TreeNode* tmpNode = nullptr;
     string type = getNextTokenType();
-    if(type=="OVER")return NULL;
+    if(type=="OVER")return nullptr;
     if(!type.compare(tokenType::IF))
         tmpNode = parseIfStmt();
     else if(!type.compare(tokenType::WHILE))
@@ -66,14 +66,32 @@ TreeNode *Parser::parseExp() {
 TreeNode *Parser::parseStmtBlock() {
     TreeNode* node = new TreeNode(StmtK);
     TreeNode* header = node;
-    TreeNode* temp = NULL;
+    TreeNode* temp = nullptr;
     consumeNextToken(tokenType::LBRACE);
-    while (getNextTokenType() != tokenType::RBRACE) {//允许语句块中没有语句
+    while (this->tokenHasNext()) {
+        if(getNextTokenType() == tokenType::RBRACE )
+            break;
+        //允许语句块中没有语句
         temp = parseStmt();
         node->child.push_back(temp);
         node = temp;
     }
-    consumeNextToken(tokenType::RBRACE);
+    if(!tokenHasNext()){
+        if(getNextTokenType()==tokenType::RBRACE)
+        // find RBrace unitl the end of file, then error
+        errnum++;
+        string errmsg;
+        nextToken();
+        errmsg.append("    ERROR:第 ")
+        .append(to_string(curr.getLine()))
+        .append(" 行,第 ")
+        .append(to_string(curr.getPosition()))
+        .append(" 列：")
+        .append("缺少语句块的结束}标志\n");
+        this->errors.push_back(errmsg);
+        cout<<errmsg<<endl;
+    }
+    else consumeNextToken(tokenType::RBRACE);
     return header;
 }
 
@@ -94,6 +112,16 @@ TreeNode *Parser::parseIfStmt() {
     consumeNextToken(tokenType::RPAREN);
     //单一语句或者语句块
     ifnode->child.push_back(parseStmt());
+//    bool hasIfBrace = true;
+//    if(getNextTokenType()==tokenType::LBRACE){
+//        nextToken();
+//    }else{ hasIfBrace = false; }
+//    //有大括号
+//    if(hasIfBrace){
+//        while(tokenHasNext()){
+
+//        }
+//    }
     nextToken();
     if(!curr.getType().compare(tokenType::ELSE)){
         TreeNode* elsenode= new TreeNode(ElseK);
@@ -386,6 +414,7 @@ bool Parser::consumeNextToken(std::string type) {
         return false;
     }
 }
+
 
 bool Parser::checkNextTokenType(int n, ...) {
     auto type = this->getNextTokenType();
