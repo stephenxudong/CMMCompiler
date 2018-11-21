@@ -4,7 +4,7 @@
 
 #include "compiler.h"
 using namespace std;
-vector<Token> compiler::lexcial(char* infile,char* outpath){
+vector<Token> compiler::lexcial(const char* infile,const char* outpath){
     auto lines = readToLines(infile);
     // 去除单行注释
     preProcessing(lines);

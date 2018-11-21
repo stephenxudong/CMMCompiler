@@ -9,7 +9,7 @@
 #include <cstdio>
 #include <cstring>
 #include "../type/tokentype.h"
-
+#include <unistd.h>
 // 将一个字符串转化成字符序列
 vector<char> toCharArray(const string& s) {
     vector<char> sequence;

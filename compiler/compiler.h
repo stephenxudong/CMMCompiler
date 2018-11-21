@@ -15,8 +15,8 @@
 #include "../util/Util.h"
 namespace compiler{
     //static TableNode *head = new TableNode();//符号表
-    vector<Token> lexcial(char* filepath,char* output=NULL);
-    TreeNode* parse(vector<Token>& tokens,char* output=NULL);
+    vector<Token> lexcial(const char* filepath,const char* output=nullptr);
+    TreeNode* parse(vector<Token>& tokens,char* output=nullptr);
 }
 
 
