@@ -32,7 +32,10 @@ SOURCES += \
     compiler/Parser.cpp \
     type/Token.cpp \
     util/Thread.cpp \
-    util/Util.cpp
+    util/Util.cpp \
+    compiler/Semantic.cpp \
+    type/SymbolTable.cpp \
+    type/TableNode.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -45,7 +48,9 @@ HEADERS += \
     type/TreeNode.h \
     type/TreeNodeType.h \
     util/Thread.h \
-    util/Util.h
+    util/Util.h \
+    compiler/Semantic.h \
+    type/SymbolTable.h
 
 FORMS += \
         mainwindow.ui
