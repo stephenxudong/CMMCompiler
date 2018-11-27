@@ -66,6 +66,10 @@ public:
     void setName(const string &value);
     int getLevel() const;
     void setLevel(int value);
+    int getArrayEleCnt() const;
+    void setArrayEleCnt(int value);
+    int getLine() const;
+    void setLine(int value);
 };
 
 

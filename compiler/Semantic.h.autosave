@@ -43,7 +43,7 @@ private:
     void readStmt(TreeNode* node);
     void writeStmt(TreeNode* node);
     bool condition(TreeNode* node);
-    void expression(TreeNode* node);
+    string expression(TreeNode* node);
     string array(TreeNode* node, int size);
 
     bool checkID(TreeNode* node, int level);

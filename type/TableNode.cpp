@@ -50,6 +50,26 @@ void TableNode::setLevel(int value)
     level = value;
 }
 
+int TableNode::getArrayEleCnt() const
+{
+    return arrayEleCnt;
+}
+
+void TableNode::setArrayEleCnt(int value)
+{
+    arrayEleCnt = value;
+}
+
+int TableNode::getLine() const
+{
+    return line;
+}
+
+void TableNode::setLine(int value)
+{
+    line = value;
+}
+
 std::string TableNode::tostr() const
 {
     string s = "";

@@ -75,6 +75,10 @@ public:
      void setContent(const string &value);
 
      void releaseChild();
+     string getNodekind() const;
+     void setNodekind(const string &value);
+     int getLine() const;
+     void setLine(int value);
 };
 #endif /* TreeNode_h */
 

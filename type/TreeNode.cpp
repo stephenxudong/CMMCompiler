@@ -1,5 +1,25 @@
 #include "TreeNode.h"
 
+string TreeNode::getNodekind() const
+{
+    return nodekind;
+}
+
+void TreeNode::setNodekind(const string &value)
+{
+    nodekind = value;
+}
+
+int TreeNode::getLine() const
+{
+    return line;
+}
+
+void TreeNode::setLine(int value)
+{
+    line = value;
+}
+
 std::string TreeNode::getContent() const
 {
     return content;
