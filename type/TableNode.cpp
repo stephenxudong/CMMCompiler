@@ -1,11 +1,11 @@
 #include "type/TableNode.h"
 
-TreeNodeK TableNode::getKind() const
+string TableNode::getKind() const
 {
     return kind;
 }
 
-void TableNode::setKind(const TreeNodeK &value)
+void TableNode::setKind(const string &value)
 {
     kind = value;
 }

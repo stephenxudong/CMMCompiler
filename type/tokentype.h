@@ -10,7 +10,7 @@
 #define tag_h
 #include <string>
 using std::string;
-namespace tokenType {
+namespace TokenType {
     static const string KEYWORD = "keywords";
     static const string IDENTIFIER = "identifier";
     
@@ -39,13 +39,15 @@ namespace tokenType {
     static const string ELSE = "else";
     static const string BOOL = "bool";
     static const string STRING = "string";
-    static const string TRUE = "true";
-    static const string FALSE = "false";
+
     
     
     /**/
     static const string LITERAL_INT = "int_val";
     static const string LITERAL_REAL = "real_val";
+    static const string LITERAL_STRING = "string_val";
+    static const string LITERAL_TRUE = "true";
+    static const string LITERAL_FALSE = "false";
     /* 分隔符*/
     static const string DQ = "\"";
     static const string RBRACE = "}";

@@ -37,6 +37,8 @@ TreeNode *Parser::parseStmt() {
         tmpNode = parseReadStmt();
     else if(!type.compare(TokenType::WRITE))
         tmpNode = parseWriteStmt();
+    else if(!type.compare(TokenType::LBRACE))
+        tmpNode = parseStmtBlock();
     else if(!type.compare(TokenType::IDENTIFIER))
         tmpNode = parseAssignStmt();
     else if(!type.compare(TokenType::INT)||!type.compare(TokenType::REAL))
@@ -169,6 +171,37 @@ TreeNode *Parser::add_op()
 }
 
 
+TreeNode *Parser::parseStmtBlock() {
+    TreeNode* node = new TreeNode(StmtK);
+    TreeNode* header = node;
+    TreeNode* temp = nullptr;
+    consumeNextToken(TokenType::LBRACE);
+    while (this->hasNextToken()) {
+        if(getNextTokenType() == TokenType::RBRACE )
+            break;
+        //允许语句块中没有语句
+        temp = parseStmt();
+        node->child.push_back(temp);
+        node = temp;
+    }
+    if(!hasNextToken()){
+        if(getNextTokenType()==TokenType::RBRACE)
+        // find RBrace unitl the end of file, then error
+        errnum++;
+        string errmsg;
+        nextToken();
+        errmsg.append("    ERROR:第 ")
+        .append(to_string(curr.getLine()))
+        .append(" 行,第 ")
+        .append(to_string(curr.getPosition()))
+        .append(" 列：")
+        .append("缺少语句块的结束}标志\n");
+        this->errors.push_back(errmsg);
+        cout<<errmsg<<endl;
+    }
+    else consumeNextToken(TokenType::RBRACE);
+    return header;
+}
 
 
 /**
@@ -244,6 +277,30 @@ TreeNode *Parser::parseIfStmt() {
 
     }
     return ifnode;
+    // if-block 和 else-block 可能有 大括号
+//    consumeNextToken(TokenType::IF);
+//    consumeNextToken(TokenType::LPAREN);
+//    //处理括号中的表达式
+//    ifnode->child.push_back(parseConditionExp());
+//    consumeNextToken(TokenType::RPAREN);
+//    //单一语句或者语句块
+//    ifnode->child.push_back(parseStmt());
+////    bool hasIfBrace = true;
+////    if(getNextTokenType()==tokenType::LBRACE){
+////        nextToken();
+////    }else{ hasIfBrace = false; }
+////    //有大括号
+////    if(hasIfBrace){
+////        while(tokenHasNext()){
+
+////        }
+////    }
+//    nextToken();
+//    if(!curr.getType().compare(TokenType::ELSE)){
+//        TreeNode* elsenode= new TreeNode(ElseK);
+//        elsenode->child.push_back(parseStmt());
+//        ifnode->child.push_back(elsenode);
+//    }
 
 }
 
@@ -295,6 +352,27 @@ TreeNode *Parser::parseWhileStmt() {
             stmtNode->addChild(parseStmt());
     }
     return whileNode;
+//    consumeNextToken(TokenType::WHILE);
+//    consumeNextToken(TokenType::LPAREN);
+//    whileNode->child.push_back(parseConditionExp());
+//    consumeNextToken(TokenType::RPAREN);
+//    auto type = getNextTokenType();
+//    whileNode->child.push_back(parseStmt());
+//    if(type!=TokenType::LBRACE && whileNode->child.size()>1 ){
+//        errnum++;
+//        string errmsg;
+//        nextToken();
+//        errmsg.append("    ERROR:第 ")
+//        .append(to_string(curr.getLine()))
+//        .append(" 行,第 ")
+//        .append(to_string(curr.getPosition()))
+//        .append(" 列：")
+//        .append("while语句缺少语句块开始的{\n");
+//        this->errors.push_back(errmsg);
+//        cout<<errmsg<<endl;
+//    }
+    
+//    return whileNode;
 }
 
 
@@ -329,6 +407,10 @@ TreeNode *Parser::parseAssignStmt(bool inFor) {
         checkCurrentType(TokenType::SEMICOLON);
     }
 
+//    node->child.push_back(variable());
+//    consumeNextToken(TokenType::ASSIGN);
+//    node->child.push_back(parseAddtiveExp());
+//    consumeNextToken(TokenType::SEMICOLON);
     return node;
 }
 
@@ -359,6 +441,57 @@ TreeNode *Parser::parseDeclStmt() {
     //semicolon
     checkCurrentType(TokenType::SEMICOLON,node);
     return node;
+//    TreeNode* varNode = new TreeNode(VarK);
+//    node->child.push_back(varNode);
+//    if(checkNextTokenType({TokenType::REAL,TokenType::INT})){
+//        nextToken();
+//        // 此时token是real or int
+//        auto type = curr.getType();
+//        varNode->type = type;// int or real
+//    }else{
+//        errnum++;
+//        string errmsg;
+//        errmsg.append("    ERROR:第 ")
+//        .append(to_string(curr.getLine()))
+//        .append(" 行,第 ")
+//        .append(to_string(curr.getPosition()))
+//        .append(" 列：")
+//        .append("此处应当是: ")
+//        .append("int 或者 real ").append("类型\n");
+//        this->errors.push_back(errmsg);
+//    }
+//    if(getNextTokenType()==TokenType::IDENTIFIER){
+//        nextToken();
+//        // 此时当前token是identifier
+//        varNode->val = curr.getText();
+//    }else{
+//        errnum++;
+//        string errmsg;
+//        errmsg.append("    ERROR:第 ")
+//        .append(to_string(curr.getLine()))
+//        .append(" 行,第 ")
+//        .append(to_string(curr.getPosition()))
+//        .append(" 列：")
+//        .append("此处应当是: ")
+//        .append("标识符 ").append("类型\n");
+//        this->errors.push_back(errmsg);
+//    }
+//    if(getNextTokenType()==TokenType::ASSIGN){
+//        consumeNextToken(TokenType::ASSIGN);
+//        if(getNextTokenType()==TokenType::LPAREN){
+//            consumeNextToken(TokenType::LPAREN);
+//            node->child.push_back(parseAddtiveExp());
+//            consumeNextToken(TokenType::RPAREN);
+//        }
+//        else node->child.push_back(parseAddtiveExp());
+//    }else if(getNextTokenType()==TokenType::LBRACKET){
+//        // 数组类型
+//        consumeNextToken(TokenType::LBRACKET);
+//        node->child.push_back(parseAddtiveExp());
+//        consumeNextToken(TokenType::RBRACKET);
+//    }
+//    consumeNextToken(TokenType::SEMICOLON);
+//    return node;
 }
 
 TreeNode *Parser::delc_aid(TreeNode* &node)
@@ -446,7 +579,16 @@ TreeNode *Parser::parseReadStmt() {
         return new TreeNode(TreeNodeType::ErrorK,err);
 
     }
-
+//    consumeNextToken(TokenType::READ);
+//    if(!consumeNextToken(TokenType::LPAREN)){
+//        // 缺少左括号
+//        nextToken();
+//    }
+//    readNode->child.push_back(variable());
+//    consumeNextToken(TokenType::RPAREN);//此时并不需要nexttoken
+//    if(!consumeNextToken(TokenType::SEMICOLON)){
+//        nextToken();
+//    }
     return node;
 }
 
@@ -492,7 +634,12 @@ TreeNode *Parser::parseWriteStmt() {
         return new TreeNode(TreeNodeType::ErrorK,err);
 
     }
-
+//    TreeNode* node = new TreeNode(WriteK);
+//    consumeNextToken(TokenType::WRITE);
+//    consumeNextToken(TokenType::LPAREN);
+//    node->child.push_back(parseAddtiveExp());
+//    consumeNextToken(TokenType::RPAREN);
+//    consumeNextToken(TokenType::SEMICOLON);
     return node;
 }
 
@@ -517,6 +664,18 @@ TreeNode *Parser::parseConditionExp() {
     }
     return tmpNode;
 
+//    TreeNode* exp = new TreeNode(ConditionK);
+//    auto leftExp = parseAddtiveExp();
+//    vector<string> vec = {TokenType::GT, TokenType::LT,TokenType::GET,TokenType::LET,TokenType::EQUAL};
+//    if(checkNextTokenType(vec)){
+//        exp->child.push_back(leftExp);
+//        nextToken();
+//        exp->child.push_back(conditionSymbol());
+//        exp->child.push_back(parseAddtiveExp());
+//        return exp;
+//    }
+//    delete exp;
+//    return leftExp;
 }
 
 TreeNode *Parser::comparison_op()
@@ -545,6 +704,29 @@ TreeNode *Parser::comparison_op()
     }
     return tmpNode;
 }
+/**
+ addtive-exp -> term add-op additive-exp | term
+ 
+ @return treeNode
+ */
+TreeNode *Parser::parseAddtiveExp() {
+    TreeNode* addExp = new TreeNode(ExpK);
+    auto leftnode = term();
+    vector<string> vec = {TokenType::PLUS, TokenType::MINUS};
+    if(checkNextTokenType(vec)){
+        addExp->child.push_back(leftnode);
+        nextToken();
+        // 判断是加号还是减号
+        if(curr.getType()==TokenType::PLUS)
+            addExp->child.push_back(new TreeNode(plusOp));
+        else addExp->child.push_back(new TreeNode(minusOp));
+        //递归处理后半段表达式
+        addExp->child.push_back(parseAddtiveExp());
+        return addExp;
+    }
+    delete addExp;
+    return leftnode;
+}
 
 
 /**
@@ -563,7 +745,20 @@ TreeNode *Parser::term() {
 
     }
     return tmpNode;
-
+//    if(checkNextTokenType(vec)){
+//        termNode->child.push_back(leftNode);
+//        nextToken();
+//        // 判断是加号还是减号
+//        if(curr.getType()==TokenType::MULTI)
+//            termNode->child.push_back(new TreeNode(multiOp));
+//        else termNode->child.push_back(new TreeNode(divideOp));
+//        nextToken();
+//        //递归处理后半段表达式
+//        termNode->child.push_back(term());
+//        return termNode;
+//    }
+//    delete termNode;
+    //    return leftNode;
 }
 
 TreeNode *Parser::mul_op()
@@ -640,10 +835,65 @@ TreeNode *Parser::factor() {
         return new TreeNode(TreeNodeType::ErrorK,err);
     }
     return tmpNode;
+
+//    TreeNode* node = new TreeNode(FactorK);
+//    auto t = getNextTokenType();
+//    if(t==TokenType::LITERAL_INT|| t==TokenType::LITERAL_REAL){
+//        TreeNode* literalNode = literal();
+//        node->child.push_back(literalNode);
+//    }
+//    else if(t==TokenType::LPAREN){
+//        consumeNextToken(TokenType::LPAREN);
+//        delete node;
+//        node = parseAddtiveExp();
+//        consumeNextToken(TokenType::RPAREN);
+//    }
+//    else if(t==TokenType::IDENTIFIER){
+////        TreeNode* identiNode = new TreeNode(ExpK,);
+//        node->child.push_back(this->variable());
+//    }
+//    return node;
 }
 
 
 
+/**
+ ConditionOperator -> plusOp | minusOp | multiOp | divideOp
+
+ @return cnditionSymbol-TreeNode
+ */
+TreeNode *Parser::conditionSymbol() {
+    TreeNode* optor = NULL;
+    string type = curr.getType();
+    if(!type.compare(TokenType::GT) || !type.compare(TokenType::LT)||
+       !type.compare(TokenType::GET) || !type.compare(TokenType::LET)||
+       !type.compare(TokenType::EQUAL)){
+        optor = new TreeNode(ConditionK);
+        optor->type = type;
+    }
+    return optor;
+}
+
+bool Parser::consumeNextToken(std::string type) {
+    if(getNextTokenType()==type){
+        nextToken();
+        return true;
+    }
+    else{
+        errnum++;
+        string errmsg;
+        errmsg.append("    ERROR:第 ")
+        .append(to_string(curr.getLine()))
+        .append(" 行,第 ")
+        .append(to_string(curr.getPosition()))
+        .append(" 列：")
+        .append("此处应当是: ")
+        .append(type).append("类型\n");
+        this->errors.push_back(errmsg);
+        cout<<errmsg;
+        return false;
+    }
+}
 
 void Parser::error(string error)
 {
@@ -711,6 +961,53 @@ bool Parser::checkNextTokenType(vector<string> types) {
 }
 
 
+/**
+ literal -> int_val | read_val
+
+ @return literal_node
+ */
+TreeNode *Parser::literal() {
+    nextToken();
+    TreeNode* node = new TreeNode(LiteralK);
+
+    node->type = curr.getType();
+    node->val = curr.getText();
+    return node;
+}
+
+
+
+/**
+ variable -> identifier | identifier[index]
+
+ @return variable-node
+ */
+TreeNode *Parser::variable() {
+    TreeNode* node = new TreeNode(VarK);
+    if(checkNextTokenType(1,TokenType::IDENTIFIER.c_str())){
+        nextToken();
+        node->type = curr.getType();
+        node->val = curr.getText();
+    }else{
+        errnum++;
+        string errmsg;
+        errmsg.append("    ERROR:第 ")
+        .append(to_string(curr.getLine()))
+        .append(" 行,第 ")
+        .append(to_string(curr.getPosition()))
+        .append(" 列：")
+        .append("此处应当是: ")
+        .append("id").append("类型\n");
+        this->errors.push_back(errmsg);
+    }
+    if(checkNextTokenType(1,TokenType::LBRACKET.c_str())){
+        consumeNextToken(TokenType::LBRACKET);
+        node->child.push_back(parseAddtiveExp());
+        consumeNextToken(TokenType::RBRACKET);
+    }
+
+    return node;
+}
 
 TreeNode *Parser::array()
 {

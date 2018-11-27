@@ -21,5 +21,10 @@ void Semantic::run()
 
 void Semantic::statement(TreeNode *root)
 {
+    for(size_t i = 0; i < root->child.size(); i++){
+        TreeNode* currentNode = root->child[i];
+        string type = currentNode->nodekind;//int_val or
 
+
+    }
 }

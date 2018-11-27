@@ -26,7 +26,7 @@ private:
 public:
     Parser(vector<Token>& tokens)
     :tokens(tokens),curr(Token("","",0,0)){
-        this->root = new TreeNode(Program);
+        this->root = new TreeNode(TreeNodeType::Programk,"Program");
         this->index = -1;
         this->nodeNo = 1;
     }
@@ -40,7 +40,7 @@ public:
     
 private:
     
-    inline bool tokenHasNext(){
+    inline bool hasNextToken(){
         return this->index+1 < this->tokens.size();
     }
     inline void nextToken(){
@@ -53,25 +53,30 @@ private:
     inline string getNextTokenType(){
         return tokens.at(index+1).getType();
     }
+
+    void error(string error);
+
+    void checkCurrentType(const string& type, TreeNode* node=nullptr);
     //比较下一下参数的类型和预定的
     bool checkNextTokenType(int n,...);
     bool checkNextTokenType(vector<string> types);
     TreeNode* parseStmt();
+    TreeNode* parseForStmt();
     TreeNode* parseIfStmt();
     TreeNode* parseWhileStmt();
     TreeNode* parseReadStmt();
     TreeNode* parseWriteStmt();
-    TreeNode* parseAssignStmt();
+    TreeNode* parseAssignStmt(bool inFor=false);
     TreeNode* parseDeclStmt();
+    TreeNode* delc_aid(TreeNode* &node);
     TreeNode* parseExp();
+    TreeNode* add_op();
     TreeNode* parseConditionExp();
-    TreeNode* parseAddtiveExp();
-    TreeNode* conditionSymbol();
-    TreeNode* literal();
-    TreeNode* parseStmtBlock();
+    TreeNode* comparison_op();
     TreeNode* term();
+    TreeNode* mul_op();
     TreeNode* factor();
-    TreeNode* variable();
+    TreeNode* array();
 };
 
 #endif /* Parser_h */

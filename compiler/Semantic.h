@@ -4,6 +4,7 @@
 #include "type/SymbolTable.h"
 #include "type/TreeNode.h"
 #include "util/Thread.h"
+#include "type/TreeNodeType.h"
 #include <regex>
 
 class Semantic : public Thread
@@ -23,10 +24,27 @@ public:
         errorInfo = "";
         userInput = "";
     }
+    virtual void run();
+
+private:
     bool matchInteger(const string &s);
     bool matchReal(const string &s);
-    virtual void run();
+
+
     void statement(TreeNode* root);
+    void declare(TreeNode* node);
+    void assign(TreeNode* node);
+    void ifStmt(TreeNode* node);
+    void whileStmt(TreeNode* node);
+    void readStmt(TreeNode* node);
+    void writeStmt(TreeNode* node);
+    void condition(TreeNode* node);
+    void expression(TreeNode* node);
+    void array(TreeNode* node, int size);
+
+    bool checkID(TreeNode* node, int level);
+
+
 };
 
 #endif // SEMANTIC_H

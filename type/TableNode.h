@@ -26,7 +26,7 @@ public:
     //元素的名字
     string name;
     //元素的类型
-    TreeNodeK kind;
+    string kind;
 //    //是否声明,便于检查重定义或者未声明使用
 //    bool isDecl;
     // 行号
@@ -40,7 +40,7 @@ public:
     //若是数组类型，其值是数组的大小，否则是0
     int arrayEleCnt;
 public:
-    TableNode(string name, TreeNodeK kind, int line, int level):
+    TableNode(string name, string kind, int line, int level):
         name(name),kind(kind),line(line),level(level){
         intVal = "";
         realVal = "";
@@ -56,8 +56,8 @@ public:
     }
     string getStringVal() const;
     void setStringVal(const string &value);
-    TreeNodeK getKind() const;
-    void setKind(const TreeNodeK &value);
+    string getKind() const;
+    void setKind(const string &value);
     string getIntVal() const;
     void setIntVal(const string &value);
     string getRealVal() const;

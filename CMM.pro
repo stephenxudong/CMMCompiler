@@ -35,7 +35,8 @@ SOURCES += \
     util/Util.cpp \
     compiler/Semantic.cpp \
     type/SymbolTable.cpp \
-    type/TableNode.cpp
+    type/TableNode.cpp \
+    type/TreeNode.cpp
 
 HEADERS += \
         mainwindow.h \

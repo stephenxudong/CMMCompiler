@@ -57,34 +57,34 @@ void Lexical::parseLine(const string& currLine, int lineNum) {
                         
                         // 处理分割符号
                         else if(ch==';'){
-                            this->tokens.push_back(Token(tokenType::SEMICOLON, ";", lineNum, i+1));
+                            this->tokens.push_back(Token(TokenType::SEMICOLON, ";", lineNum, i+1));
                         }
                         else if(ch=='('){
-                            this->tokens.push_back(Token(tokenType::LPAREN,"(", lineNum, i+1));
+                            this->tokens.push_back(Token(TokenType::LPAREN,"(", lineNum, i+1));
                             state = 0;
                         }
                         else if(ch==')'){
-                            this->tokens.push_back(Token(tokenType::RPAREN,")", lineNum, i+1));
+                            this->tokens.push_back(Token(TokenType::RPAREN,")", lineNum, i+1));
                             state = 0;
                         }
                         else if(ch=='['){
-                            this->tokens.push_back(Token(tokenType::LBRACKET,"[", lineNum, i+1));
+                            this->tokens.push_back(Token(TokenType::LBRACKET,"[", lineNum, i+1));
                             state = 0;
                         }
                         else if(ch==']'){
-                            this->tokens.push_back(Token(tokenType::RBRACKET,"]", lineNum, i+1));
+                            this->tokens.push_back(Token(TokenType::RBRACKET,"]", lineNum, i+1));
                             state = 0;
                         }
                         else if(ch=='{'){
-                            this->tokens.push_back(Token(tokenType::LBRACE,"{", lineNum, i+1));
+                            this->tokens.push_back(Token(TokenType::LBRACE,"{", lineNum, i+1));
                             state = 0;
                         }
                         else if(ch=='}'){
-                            this->tokens.push_back(Token(tokenType::RBRACE,"}", lineNum, i+1));
+                            this->tokens.push_back(Token(TokenType::RBRACE,"}", lineNum, i+1));
                             state = 0;
                         }
                         else if(ch==','){
-                            this->tokens.push_back(Token(tokenType::COMMA, ",", lineNum, i+1));
+                            this->tokens.push_back(Token(TokenType::COMMA, ",", lineNum, i+1));
                             state = 0;
                         }
                         else if(ch=='"'){
@@ -142,7 +142,7 @@ void Lexical::parseLine(const string& currLine, int lineNum) {
                                 if(num.find(".")==string::npos){
                                     // 不是浮点数
                                     if(matchInteger(num)){
-                                        this->tokens.push_back(Token(tokenType::LITERAL_INT, num, lineNum, begin+1));
+                                        this->tokens.push_back(Token(TokenType::LITERAL_INT, num, lineNum, begin+1));
                                     }else{
                                         errnum++;
                                         string errmsg;
@@ -156,7 +156,7 @@ void Lexical::parseLine(const string& currLine, int lineNum) {
                                     }
                                 }else{
                                     if(matchReal(num)){
-                                        this->tokens.push_back(Token(tokenType::LITERAL_REAL, num, lineNum, begin+1));
+                                        this->tokens.push_back(Token(TokenType::LITERAL_REAL, num, lineNum, begin+1));
                                     }else{
                                         errnum++;
                                         string errmsg;
@@ -182,16 +182,16 @@ void Lexical::parseLine(const string& currLine, int lineNum) {
                             string val = line.substr(begin,end-begin);
                             i--;
                             if(matchKey(val)){
-                                this->tokens.push_back(Token(tokenType::KEYWORD, val, lineNum, begin+1));
+                                this->tokens.push_back(Token(TokenType::KEYWORD, val, lineNum, begin+1));
                                 state = 0;
                             }
                             else if(mathchIdentifier(val)){
                                 if(!val.compare("true"))
-                                    this->tokens.push_back(Token(tokenType::TRUE, val, lineNum, begin+1));
+                                    this->tokens.push_back(Token(TokenType::LITERAL_TRUE, val, lineNum, begin+1));
                                 else if(!val.compare("false"))
-                                    this->tokens.push_back(Token(tokenType::FALSE, val, lineNum, begin+1));
+                                    this->tokens.push_back(Token(TokenType::LITERAL_FALSE, val, lineNum, begin+1));
                                 else
-                                    this->tokens.push_back(Token(tokenType::IDENTIFIER, val, lineNum, begin+1));
+                                    this->tokens.push_back(Token(TokenType::IDENTIFIER, val, lineNum, begin+1));
                                 state = 0;
                             }
                             else{
@@ -214,7 +214,7 @@ void Lexical::parseLine(const string& currLine, int lineNum) {
                         if(ch=='"'){
                             end = i;
                             string val = line.substr(begin,end-begin);
-                            this->tokens.push_back(Token(tokenType::STRING, val, lineNum, begin+1));
+                            this->tokens.push_back(Token(TokenType::STRING, val, lineNum, begin+1));
                             state = 0;
                         }
                         else if(i ==line.length()-1){
@@ -231,13 +231,13 @@ void Lexical::parseLine(const string& currLine, int lineNum) {
                         }
                         break;
                     case 4:
-                        this->tokens.push_back(Token(tokenType::PLUS, "+", lineNum, i));
+                        this->tokens.push_back(Token(TokenType::PLUS, "+", lineNum, i));
                         i--;
                         state = 0;
                         break;
                     case 5:
                         if(ch==' '){//表示是二元运算符
-                            this->tokens.push_back(Token(tokenType::MINUS, "-", lineNum, i));
+                            this->tokens.push_back(Token(TokenType::MINUS, "-", lineNum, i));
                             i--;
                             state = 0;
                         }
@@ -249,7 +249,7 @@ void Lexical::parseLine(const string& currLine, int lineNum) {
                         }
                         break;
                     case 6:
-                        this->tokens.push_back(Token(tokenType::MULTI, "*", lineNum, i));
+                        this->tokens.push_back(Token(TokenType::MULTI, "*", lineNum, i));
                         i--;
                         state = 0;
                         break;
@@ -260,38 +260,38 @@ void Lexical::parseLine(const string& currLine, int lineNum) {
                             comment = true;
                         }
                         else{
-                            this->tokens.push_back(Token(tokenType::DIVIDE, "/", lineNum, i));
+                            this->tokens.push_back(Token(TokenType::DIVIDE, "/", lineNum, i));
                             i--;
                             state = 0;
                         }
                         break;
                     case 8:
-                        this->tokens.push_back(Token(tokenType::MOD, "%", lineNum, i));
+                        this->tokens.push_back(Token(TokenType::MOD, "%", lineNum, i));
                         i--;
                         state = 0;
                         break;
                     case 9:
                         // 两个连续的等号是equal，一个等号是assign
                         if (ch == '=') {
-                            this->tokens.push_back(Token(tokenType::EQUAL, "=", lineNum, i));
+                            this->tokens.push_back(Token(TokenType::EQUAL, "=", lineNum, i));
                         }else{
-                            this->tokens.push_back(Token(tokenType::ASSIGN, "=", lineNum, i));
+                            this->tokens.push_back(Token(TokenType::ASSIGN, "=", lineNum, i));
                             i--;
                             
                         }
                         state = 0;
                         break;
                     case 10:
-                        this->tokens.push_back(Token(tokenType::GT, ">", lineNum, i));
+                        this->tokens.push_back(Token(TokenType::GT, ">", lineNum, i));
                         i--;
                         state = 0;
                         break;
                     case 11:
                         if(ch=='>'){
-                            this->tokens.push_back(Token(tokenType::NEQUAL, "<>", lineNum, i));
+                            this->tokens.push_back(Token(TokenType::NEQUAL, "<>", lineNum, i));
                         }
                         else{
-                            this->tokens.push_back(Token(tokenType::LT, "<", lineNum, i));
+                            this->tokens.push_back(Token(TokenType::LT, "<", lineNum, i));
                             i--;
                         }
                         state = 0;

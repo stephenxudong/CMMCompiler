@@ -103,7 +103,7 @@ vector<string> preProcessing(vector<string>& lines){
 void eliminate(vector<Token>& tokens){
     for(auto i = tokens.begin(); i != tokens.end();){
         auto type = (*i).getType();
-        if(!type.compare(tokenType::KEYWORD)){
+        if(!type.compare(TokenType::KEYWORD)){
             string t((*i).getText());
             (*i).setType(t);
         }
