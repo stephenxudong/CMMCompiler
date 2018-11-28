@@ -25,9 +25,9 @@ private:
     
 public:
     Parser(vector<Token>& tokens)
-    :tokens(tokens),curr(Token("","",0,0)){
+    :tokens(tokens),curr(this->tokens.at(0)){
         this->root = new TreeNode(TreeNodeType::Programk,"Program");
-        this->index = -1;
+        this->index = 0;
         this->nodeNo = 1;
     }
     

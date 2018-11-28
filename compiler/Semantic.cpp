@@ -61,6 +61,16 @@ void Semantic::statement(TreeNode *root)
     }
 }
 
+void Semantic::declare(TreeNode *node)
+{
+
+}
+
+void Semantic::assign(TreeNode *node)
+{
+
+}
+
 void Semantic::ifStmt(TreeNode *node)
 {
     int count = node->childNum();
@@ -111,6 +121,16 @@ void Semantic::whileStmt(TreeNode *node)
         level++;
 
     }
+}
+
+void Semantic::readStmt(TreeNode *node)
+{
+
+}
+
+void Semantic::writeStmt(TreeNode *node)
+{
+
 }
 
 /**
@@ -310,4 +330,14 @@ string Semantic::array(TreeNode *node, int size)
             return NULL_STRING;
     }
     return NULL_STRING;
+}
+
+bool Semantic::checkID(TreeNode *node, int level)
+{
+    return false;
+}
+
+string Semantic::readInput()
+{
+    return "";
 }

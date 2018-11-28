@@ -370,9 +370,9 @@ TreeNode *Parser::delc_aid(TreeNode* &node)
         if(curr.getType()==TokenType::LBRACKET){
             idNode->addChild(array());
         }
-        else if(curr.getType()==TokenType::ASSIGN||
-                curr.getType()==TokenType::SEMICOLON||
-                curr.getText()==TokenType::COMMA){
+        else if(curr.getType()!=TokenType::ASSIGN &&
+                curr.getType()!=TokenType::SEMICOLON &&
+                curr.getText()!=TokenType::COMMA){
             string err = "声明语句出错，标识符后面出现不正确的token";
             error(err);
             node->addChild(new TreeNode(TreeNodeType::ErrorK,err));
@@ -401,7 +401,7 @@ TreeNode *Parser::delc_aid(TreeNode* &node)
  @return read-node
  */
 TreeNode *Parser::parseReadStmt() {
-    TreeNode* node = nullptr;
+    TreeNode* node = new TreeNode(TreeNodeType::ReadK,"Read",curr.getLine());
     nextToken();
     //left paren
     if(curr.getType()==TokenType::LPAREN){
@@ -414,10 +414,11 @@ TreeNode *Parser::parseReadStmt() {
 
     }
     if(curr.getType()==TokenType::IDENTIFIER){
-        node = new TreeNode(TreeNodeType::IdentifierK,curr.getText(),curr.getLine());
+        TreeNode* tmpnode = new TreeNode(TreeNodeType::IdentifierK,curr.getText(),curr.getLine());
         nextToken();
         if(curr.getType()==TokenType::LBRACKET)
             node->addChild(array());
+        node->addChild(tmpnode);
     }else{
         string err = "Read语句中此处应该是标识符";
         error(err);
@@ -437,7 +438,7 @@ TreeNode *Parser::parseReadStmt() {
     }
 
     //simicolon
-    if(curr.getType()==TokenType::RPAREN){
+    if(curr.getType()==TokenType::SEMICOLON){
         nextToken();
     }else{
         string err = "Read语句缺少分号";
@@ -457,25 +458,25 @@ TreeNode *Parser::parseReadStmt() {
  @return write-node
  */
 TreeNode *Parser::parseWriteStmt() {
-    TreeNode* node = nullptr;
+    TreeNode* node = new TreeNode(TreeNodeType::WriteK,"Write",curr.getLine());
     nextToken();
     //left paren
     if(curr.getType()==TokenType::LPAREN){
         nextToken();
     }else{
-        string err = "write语句缺少左括号";
+        string err = " write语句缺少左括号";
         error(err);
         //此处不需要善后
         return new TreeNode(TreeNodeType::ErrorK,err);
 
     }
-    node = parseExp();
+    node->addChild(parseExp());
 
     //right paren
     if(curr.getType()==TokenType::RPAREN){
         nextToken();
     }else{
-        string err = "Read语句缺少右括号";
+        string err = " write语句缺少右括号";
         error(err);
         delete node;
         return new TreeNode(TreeNodeType::ErrorK,err);
@@ -483,10 +484,10 @@ TreeNode *Parser::parseWriteStmt() {
     }
 
     //simicolon
-    if(curr.getType()==TokenType::RPAREN){
+    if(curr.getType()==TokenType::SEMICOLON){
         nextToken();
     }else{
-        string err = "Read语句缺少分号";
+        string err = " write语句缺少分号";
         error(err);
         delete node;
         return new TreeNode(TreeNodeType::ErrorK,err);

@@ -48,5 +48,9 @@ TreeNode* compiler::parse(vector<Token>& tokens,char* outpath){
         cout<<"Great, No Syntax Errors!"<<endl;
         p.printTree(root, 0);
     }
+    else{
+        for(string& i:p.error())
+            cout<<i<<endl;
+    }
     return root;
 }

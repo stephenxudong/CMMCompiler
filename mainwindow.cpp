@@ -23,10 +23,11 @@ void MainWindow::on_toolButton_clicked()
     fileDialog->setAcceptMode(QFileDialog::AcceptOpen);//设置文件对话框为打开模式
     fileDialog->setFileMode(QFileDialog::AnyFile);
     fileDialog->setViewMode(QFileDialog::Detail);//文件以详细的形式显示，显示文件名，大小，创建日期等信息；
-    fileDialog->setDirectory("../");//设置文件对话框打开时初始打开的位置
+    fileDialog->setDirectory("../../");//设置文件对话框打开时初始打开的位置
+    QString path;
     if(fileDialog->exec()){
-        QString path = fileDialog->selectedFiles()[0];
-        auto tokens = lexcial(path.toStdString().c_str(),"out.txt");
-        auto root = parse(tokens,nullptr);
+        path = fileDialog->selectedFiles()[0];
     }
+    auto tokens = lexcial(path.toStdString().c_str(),"out.txt");
+    auto root = parse(tokens,nullptr);
 }
