@@ -18,6 +18,9 @@ public:
 private slots:
     void on_toolButton_clicked();
 
+    void on_textEdit_textChanged();
+
+
 private:
     Ui::MainWindow *ui;
 };

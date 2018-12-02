@@ -18,16 +18,20 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_toolButton_clicked()
 {
-    QFileDialog* fileDialog = new QFileDialog(this);
-    fileDialog->setWindowTitle(tr("Open File"));//设置文件保存对话框的标题
-    fileDialog->setAcceptMode(QFileDialog::AcceptOpen);//设置文件对话框为打开模式
-    fileDialog->setFileMode(QFileDialog::AnyFile);
-    fileDialog->setViewMode(QFileDialog::Detail);//文件以详细的形式显示，显示文件名，大小，创建日期等信息；
-    fileDialog->setDirectory("../../");//设置文件对话框打开时初始打开的位置
-    QString path;
-    if(fileDialog->exec()){
-        path = fileDialog->selectedFiles()[0];
-    }
-    auto tokens = lexcial(path.toStdString().c_str(),"out.txt");
+    string fileName;
+    fileName = QFileDialog::getOpenFileName(this,"","", tr("CMM(*.c--)")).toStdString();
+    string content = "";
+    QString text = QString::fromStdString(content);
+
+    ui->textEdit->setPlainText(text);
+    ui->textEdit->raise();
+    auto tokens = lexcial(fileName.c_str(),"out.txt");
     auto root = parse(tokens,nullptr);
 }
+
+void MainWindow::on_textEdit_textChanged()
+{
+
+}
+
+
