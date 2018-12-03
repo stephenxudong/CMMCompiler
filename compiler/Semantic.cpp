@@ -63,7 +63,252 @@ void Semantic::statement(TreeNode *root)
 
 void Semantic::declare(TreeNode *node)
 {
+    string content = node->getContent();
+    int idx = 0;
+    while(idx<node->childNum()){
+        TreeNode* temp = node->getChild(idx);
+        //变量名字
+        string name = temp->getContent();
+        if(table.searchInLevel(name,level)!=nullptr){
+            //声明普通变量
+            if(temp->childNum()==0){
+                TableNode* element = new TableNode(temp->getContent(),content,temp->getLine(),level);
+                idx++;
+                //判断变量在声明的时候有没有初始化
+                if(idx < node->childNum() && node->getChild(idx)->getContent()==TokenType::ASSIGN){
+                    TreeNode* valNode = node->getChild(idx)->getChild(0);
+                    string value = valNode->getContent();
+                    /** declear int variable*/
+                    if(content==TokenType::INT){
+                        //declear int variable
+                        if(matchInteger(value)){
+                            element->setIntVal(value);
+                            element->setRealVal(to_string(atof(value.c_str())));
+                        }
+                        else if(matchReal(value)){
+                            string err = "value和类型不匹配:浮点数不能复制给int型变量";
+                            error(err,valNode->getLine());
+                        }
+                        else if(value==TokenType::LITERAL_FALSE || value == TokenType::LITERAL_TRUE){
+                            string err = "value和类型不匹配:布尔值不能复制给int型变量";
+                            error(err,valNode->getLine());
+                        }
+                        else if(valNode->getNodekind()=="字符串"){
+                            string err = "value和类型不匹配:字符串不能复制给int型变量";
+                            error(err,valNode->getLine());
+                        }
+                        else if(valNode->getNodekind()==TreeNodeType::IdentifierK){
+                            if(checkID(valNode,level)){
+                                if(table.getAllLevel(valNode->getContent(),level)->getKind()
+                                        ==TokenType::LITERAL_INT){
+                                    element->setIntVal(table.getAllLevel(valNode->getContent(),level)->getIntVal());
+                                    element->setRealVal(table.getAllLevel(valNode->getContent(),level)->getRealVal());
+                                }
+                                else if(value==TokenType::LITERAL_REAL){
+                                    string err = "value和类型不匹配:浮点数不能复制给int型变量";
+                                    error(err,valNode->getLine());
+                                }
+                                else if(value==TokenType::LITERAL_FALSE || value == TokenType::LITERAL_TRUE){
+                                    string err = "value和类型不匹配:布尔值不能复制给int型变量";
+                                    error(err,valNode->getLine());
+                                }
+                                else if(valNode->getNodekind()=="字符串"){
+                                    string err = "value和类型不匹配:字符串不能复制给int型变量";
+                                    error(err,valNode->getLine());
+                                }
+                            }
+                            else{
+                                return;
+                            }
+                        }
+                        else if(value==TokenType::PLUS || value==TokenType::MINUS
+                                ||value==TokenType::MULTI||value==TokenType::DIVIDE){
+                            string result = expression(valNode);
+                            if(result!=NULL_STRING){
+                                if(matchInteger(result)){
+                                    element->setIntVal(result);
+                                    element->setRealVal(to_string(atof(result.c_str())));
+                                }
+                                else if(matchReal(result)){
+                                    string err = "value和类型不匹配:浮点数不能复制给int型变量";
+                                    error(err,valNode->getLine());
+                                    return;
+                                }
+                                else return;
 
+                    }
+
+                            }
+                        }
+                    /** declear real variable*/
+                    else if(content==TokenType::REAL){
+                        if(matchInteger(value)){
+                            element->setRealVal(to_string(atof(value.c_str())));
+                        }
+                        else if(matchReal(value)){
+                            element->setRealVal(value);
+                        }
+                        else if(value==TokenType::LITERAL_FALSE || value == TokenType::LITERAL_TRUE){
+                            string err = "value和类型不匹配:布尔值不能复制给real型变量";
+                            error(err,valNode->getLine());
+                        }
+                        else if(valNode->getNodekind()=="字符串"){
+                            string err = "value和类型不匹配:字符串不能复制给real型变量";
+                            error(err,valNode->getLine());
+                        }
+                        else if(valNode->getNodekind()==TreeNodeType::IdentifierK){
+                            if(checkID(valNode,level)){
+                                if(table.getAllLevel(valNode->getContent(),level)->getKind()==TokenType::LITERAL_INT
+                                || table.getAllLevel(valNode->getContent(),level)->getKind()
+                                        ==TokenType::LITERAL_REAL){
+                                    element->setRealVal(table.getAllLevel(valNode->getContent(),level)->getRealVal());
+                                }
+                                /* need to modify here!!!!!
+                                 * need to modify here!!!!!
+                                 * need to modify here!!!!!
+                                 * need to modify here!!!!!
+                                */
+                                else if(table.getAllLevel(valNode->getContent(),level)->getKind()=="布尔值"){
+                                    string err = "value和类型不匹配:浮点数不能复制给int型变量";
+                                    error(err,valNode->getLine());
+                                }
+                                else if(value==TokenType::LITERAL_FALSE || value == TokenType::LITERAL_TRUE){
+                                    string err = "value和类型不匹配:布尔值不能复制给int型变量";
+                                    error(err,valNode->getLine());
+                                }
+                                else if(valNode->getNodekind()=="字符串"){
+                                    string err = "value和类型不匹配:字符串不能复制给int型变量";
+                                    error(err,valNode->getLine());
+                                }
+                            }
+                            else{
+                                return;
+                            }
+                        }
+                        else if(value==TokenType::PLUS || value==TokenType::MINUS
+                                ||value==TokenType::MULTI||value==TokenType::DIVIDE){
+                            string result = expression(valNode);
+                            if(result!=NULL_STRING){
+                                if(matchInteger(result)){
+                                    element->setRealVal(to_string(atof(result.c_str())));
+                                }
+                                else if(matchReal(result)){
+                                    element->setRealVal(result);
+                                }
+                                else return;
+                            }
+                        }
+                   }
+                    /** declear string variable*/
+                    else if(content==TokenType::STRING){
+                        if(matchInteger(value)){
+                            string err = "value和类型不匹配:int不能复制给string型变量";
+                            error(err,valNode->getLine());
+                        }
+                        else if(matchReal(value)){
+                            string err = "value和类型不匹配:real不能复制给string型变量";
+                            error(err,valNode->getLine());
+                        }
+                        else if(value==TokenType::LITERAL_FALSE || value == TokenType::LITERAL_TRUE){
+                            string err = "value和类型不匹配:int不能复制给string型变量";
+                            error(err,valNode->getLine());
+                        }
+                        else if(valNode->getNodekind()=="字符串"){
+                           element->setStringVal(value);
+                        }
+                        else if(valNode->getNodekind()==TreeNodeType::IdentifierK){
+                            if(checkID(valNode,level)){
+                                if(table.getAllLevel(valNode->getContent(),level)->getKind()==TokenType::LITERAL_INT){
+                                    string err = "value和类型不匹配:int不能复制给string型变量";
+                                    error(err,valNode->getLine());
+                                }
+                                else if(table.getAllLevel(valNode->getContent(),level)->getKind()==TokenType::LITERAL_REAL){
+                                        string err = "value和类型不匹配:reals不能复制给string型变量";
+                                        error(err,valNode->getLine());
+                                }
+                                else if(value==TokenType::LITERAL_FALSE || value == TokenType::LITERAL_TRUE){
+                                    string err = "value和类型不匹配:布尔值不能复制给int型变量";
+                                    error(err,valNode->getLine());
+                                }
+                                else if(table.getAllLevel(valNode->getContent(),level)->getKind()=="字符串"){
+                                   element->setStringVal(value);
+                                }
+                            }
+                            else{
+                                return;
+                            }
+                        }
+                        else if(value==TokenType::PLUS || value==TokenType::MINUS
+                                ||value==TokenType::MULTI||value==TokenType::DIVIDE){
+                            string err = "不能把算数表达式复制给字符串变量";
+                            error(err,valNode->getLine());
+                        }
+                    }
+                    /** declear bool variable*/
+                    else{
+                        if(matchInteger(value)){
+                            int i = atoi(value.c_str());
+                            if(i<=0)
+                                element->setStringVal("false");
+                            else
+                                element->setStringVal("true");
+                        }
+                        else if(matchReal(value)){
+                            string err = "value和类型不匹配:real不能复制给bool型变量";
+                            error(err,valNode->getLine());
+                        }
+                        else if(value==TokenType::LITERAL_FALSE||value==TokenType::LITERAL_TRUE){
+                           element->setStringVal(value);
+                        }
+                        else if(valNode->getNodekind()=="字符串"){
+                            string err = "value和类型不匹配:字符串不能复制给bool型变量";
+                            error(err,valNode->getLine());
+                        }
+                        else if(valNode->getNodekind()==TreeNodeType::IdentifierK){
+                            if(checkID(valNode,level)){
+                                if(table.getAllLevel(valNode->getContent(),level)->getKind()==TokenType::LITERAL_INT){
+                                    int i = atoi(table.getAllLevel(valNode->getContent(),level)->getIntVal().c_str());
+                                    if(i<=0)
+                                        element->setStringVal("false");
+                                    else
+                                        element->setStringVal("true");
+                                }
+                                else if(table.getAllLevel(valNode->getContent(),level)->getKind()==TokenType::LITERAL_REAL){
+                                    string err = "value和类型不匹配:real不能复制给bool型变量";
+                                    error(err,valNode->getLine());
+                                }
+                                else if(table.getAllLevel(valNode->getContent(),level)->getKind()=="BOOL"){
+                                    element->setStringVal(table.getAllLevel(valNode->getContent(),level)->getStringVal());
+                                }
+                                else if(table.getAllLevel(valNode->getContent(),level)->getKind()==TokenType::LITERAL_STRING){
+                                    string err = "value和类型不匹配:string不能复制给bool型变量";
+                                    error(err,valNode->getLine());
+                                }
+                                else if(value==TokenType::PLUS || value==TokenType::MINUS
+                                        ||value==TokenType::MULTI||value==TokenType::DIVIDE){
+                                    bool result = condition(valNode);
+                                    if(result)
+                                        element->setStringVal("true");
+                                    else
+                                        element->setStringVal("false");
+                                }
+                            }
+                            else
+                                return;
+                        }
+
+                    }
+                    idx++;
+                }
+
+                table.add(element);
+             }
+            else{
+
+            }
+          }
+
+      }
 }
 
 void Semantic::assign(TreeNode *node)

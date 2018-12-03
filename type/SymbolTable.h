@@ -6,10 +6,10 @@
 #include "type/TableNode.h"
 class SymbolTable{
 private:
-    static vector<TableNode> table;
+    static vector<TableNode*> table;
 
 public:
-    TableNode get(int index){
+    TableNode* get(int index){
         return table[index];
     }
 
@@ -37,7 +37,7 @@ public:
      * 在符号表中添加元素
      * @param node
      */
-    inline void add(TableNode node){
+    inline void add(TableNode* node){
         table.push_back(node);
     }
 
@@ -47,7 +47,7 @@ public:
      * @param node
      * @param index
      */
-    inline void add(TableNode node,int index){
+    inline void add(TableNode* node,int index){
         table.insert(table.begin()+index,node);
     }
 
@@ -83,7 +83,7 @@ public:
     void update(int level){
         auto i = table.begin();
         while(i!=table.end()){
-            if(i->getLevel()>level)
+            if((*i)->getLevel()>level)
                 i = table.erase(i);
             else i++;
         }

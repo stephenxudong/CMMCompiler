@@ -353,7 +353,7 @@ bool Lexical::mathchIdentifier(const string &s) {
 bool Lexical::matchKey(const string &s) {
     return !s.compare("if") || !s.compare("else") || !s.compare("read") ||
            !s.compare("write")|| !s.compare("int") || !s.compare("bool") ||
-           !s.compare("real")  || !s.compare("while");
+           !s.compare("real")  || !s.compare("while")||!s.compare("string");
 }
 
 bool Lexical::validate(const char ch) { 
