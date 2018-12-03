@@ -19,7 +19,7 @@ MainWindow::~MainWindow()
 void MainWindow::on_toolButton_clicked()
 {
     string fileName;
-    fileName = QFileDialog::getOpenFileName(this,"","", tr("CMM(*.c--)")).toStdString();
+    fileName = QFileDialog::getOpenFileName(this,"","", tr("")).toStdString();
     string content = "";
     QString text = QString::fromStdString(content);
 
