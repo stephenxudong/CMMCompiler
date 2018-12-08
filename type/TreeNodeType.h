@@ -38,7 +38,7 @@ namespace TreeNodeType{
     static const string Stmtk = "Stmt";
     static const string ExpK = "Exp";
     static const string ErrorK = "Error";
-    static const string Ifk = "Program";
+    static const string Ifk = "If";
     static const string ElseK = "Else";
     static const string declK = "declear";
     static const string ReadK = "read";

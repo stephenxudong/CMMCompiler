@@ -1,4 +1,5 @@
 #include "Semantic.h"
+#include <math.h>
 #define NULL_STRING ""
 
 bool Semantic::matchInteger(const string &s) {
@@ -23,6 +24,8 @@ void Semantic::error(string err, int line)
 {
     string s  = "ERROR: 第";
     s.append(to_string(line)).append("行： ").append(err);
+    //语义错误直接输出
+    cout<<s<<endl;
     this->errors.push_back(s);
 }
 
@@ -63,13 +66,15 @@ void Semantic::statement(TreeNode *root)
 
 void Semantic::declare(TreeNode *node)
 {
+    //decl node: nodekind:declK,content: int | real | bool | string
+    //当前节点所包含要声明的白变量的类型
     string content = node->getContent();
     int idx = 0;
     while(idx<node->childNum()){
         TreeNode* temp = node->getChild(idx);
         //变量名字
         string name = temp->getContent();
-        if(table.searchInLevel(name,level)!=nullptr){
+        if(table.searchInLevel(name,level)==nullptr){
             //声明普通变量
             if(temp->childNum()==0){
                 TableNode* element = new TableNode(temp->getContent(),content,temp->getLine(),level);
@@ -304,15 +309,220 @@ void Semantic::declare(TreeNode *node)
                 table.add(element);
              }
             else{
+                /**declear a array*/
+                TableNode* element = new TableNode(temp->content,content,temp->getLine(),level);
+                string sizeVal = temp->getChild(0)->getContent();
+                if(matchInteger(sizeVal)){
+                    int i = atoi(sizeVal.c_str());
+                    if(i<1){
+                        string err = "数组大小必须大于0";
+                        error(err,node->getLine());
+                        return;
+                    }
+
+
+                }
+                else if(temp->getChild(0)->getNodekind()==TreeNodeType::IdentifierK){
+                    if(checkID(node,level)){
+                        TableNode* tempElement = table.getAllLevel(node->getContent(),level);
+                        if(tempElement->getKind()==TokenType::LITERAL_INT){
+                            int i = atoi(tempElement->getIntVal().c_str());
+                            if(i<1){
+                                string err = "数组大小必须大于0";
+                                error(err,node->getLine());
+                                return;
+                            }
+                            else
+                                sizeVal = tempElement->getIntVal();
+                        }
+                        else{
+                            string err = "类型不匹配,数组大小必须为整数类型";
+                            error(err, node->getLine());
+                            return;
+                        }
+                    }
+                    else return;
+                }
+                else if(sizeVal==TokenType::PLUS || sizeVal==TokenType::MINUS
+                        ||sizeVal==TokenType::MULTI||sizeVal==TokenType::DIVIDE){
+                    sizeVal = expression(temp->getChild(0));
+                    if(sizeVal!=NULL_STRING){
+                        if(matchInteger(sizeVal)){
+                            int i = atoi(sizeVal.c_str());
+                            if(i<1){
+                                string err = "数组大小必须大于0";
+                                error(err,node->getLine());
+                                return;
+                            }
+                        }
+                        else{
+                            string err = "数组大小必须是整形";
+                            error(err,node->getLine());
+                        }
+                    }
+                    else return;
+                }
+                element->setArrayEleCnt(atoi(sizeVal.c_str()));
+                table.add(element);
+                idx++;
+                for(int j = 0; j < atoi(sizeVal.c_str());j++){
+                    string s = temp->getContent();
+                    s.append("@").append(to_string(j));
+                    TableNode* ste = new TableNode(s,content,temp->getLine(),level);
+                    table.add(ste);
+                }
 
             }
-          }
 
-      }
+
+        }
+        else{
+            string err = "变量重复声明";
+            error(err,node->getLine());
+            return;
+        }
+
+    }
 }
 
 void Semantic::assign(TreeNode *node)
 {
+    //赋值语句左边部分
+    TreeNode* node1 = node->getChild(0);
+    //左半部分标识符
+    string node1Val = node1->getContent();
+    if(table.getAllLevel(node1Val,level)!=nullptr){
+        if(node1->childNum()!=0){
+            string s = array(node1->getChild(0),table.getAllLevel(node1Val,level)->getArrayEleCnt());
+            if(s!=NULL_STRING)
+                node1Val.append("@").append(s);
+            else return;
+        }
+    }
+    else{
+        string err = "变量为定义";
+        error(err,node->getLine());
+    }
+    //赋值语句左半部分类型
+    string node1kind = table.getAllLevel(node1Val,level)->getKind();
+    //赋值语句右半部分
+    TreeNode* node2 = node->getChild(1);
+    string node2kind = node2->getNodekind();
+    string node2Val = node2->getContent();
+    //赋值语句右半部分的值
+    string value = "";
+    if(node2kind=="整数"){
+        value = node2Val;
+        node2kind = "int";
+    }
+    else if(node2kind == "实数"){
+        value = node2Val;
+        node2kind = "real";
+    }
+    else if(node2kind=="字符串"){
+        value = node2Val;
+        node2kind = "string";
+    }
+    else if(node2kind=="布尔值"){
+        value = node2Val;
+        node2kind = "bool";
+    }
+    else if(node2kind=="标识符"){
+        if(checkID(node2,level)){
+            if(node2->childNum()!=0){
+                string s = array(node2->getChild(0),table.getAllLevel(node2Val,level)->getArrayEleCnt());
+                if(s!=NULL_STRING)
+                    node2Val.append("@").append(s);
+                else return;
+            }
+            TableNode* temp = table.getAllLevel(node2Val,level);
+            if(temp->getKind()=="int"){
+                value = temp->getIntVal();
+            }
+            else if(temp->getKind()=="real"){
+                value = temp->getRealVal();
+            }
+            else if(temp->getKind()=="bool"||temp->getKind()=="string"){
+                value = temp->getStringVal();
+            }
+            node2kind = temp->getKind();
+        }
+        else return;
+    }
+
+    else if(node2Val==TokenType::PLUS||node2Val==TokenType::MINUS
+            ||node2Val==TokenType::MULTI||node2Val==TokenType::DIVIDE){
+
+        string result = expression(node2);
+        if (result != NULL_STRING) {
+            if (matchInteger(result))
+                node2kind = "int";
+            else if (matchReal(result))
+                node2kind = "real";
+            value = result;
+        } else {
+            return;
+        }
+    }
+    else if(node2Val==TokenType::EQUAL||node2Val==TokenType::NEQUAL
+            ||node2Val==TokenType::LT||node2Val==TokenType::GT){
+        bool result = condition(node2);
+        node2kind = "bool";
+        value = to_string(result);
+    }
+
+    //接下来在符号表中更新变量的值
+    auto assnode = table.getAllLevel(node1Val,level);
+    if(node1kind=="int"){
+        if(node2kind=="int"){
+            assnode->setIntVal(value);
+            assnode->setRealVal(to_string(atof(value.c_str())));
+        }
+        else{
+            string err = "赋值符号左右两侧类型不相同";
+            error(err,node1->getLine());
+        }
+
+    }
+    else if(node1kind=="real"){
+        if(node2kind=="int"){
+            assnode->setRealVal(to_string(atof(value.c_str())));
+        }
+        else if(node2kind=="real"){
+            assnode->setRealVal(value);
+        }
+        else{
+            string err = "赋值符号左右两侧类型不相同";
+            error(err,node1->getLine());
+        }
+    }
+    else if(node1kind=="bool"){
+        if(node2kind == "int"){
+            int i = atoi(value.c_str());
+            if(i<0)
+                assnode->setStringVal("false");
+            else
+                assnode->setStringVal("true");
+        }
+        else if(node2kind=="bool"){
+            assnode->setStringVal(value);
+        }
+        else{
+            string err = "赋值符号左右两侧类型不相同";
+            error(err,node1->getLine());
+        }
+    }
+    else if(node1kind=="string"){
+        if(node2kind=="string"){
+            assnode->setStringVal(value);
+        }
+        else{
+            string err = "赋值符号左右两侧类型不相同";
+            error(err,node1->getLine());
+        }
+    }
+
+
 
 }
 
@@ -370,12 +580,100 @@ void Semantic::whileStmt(TreeNode *node)
 
 void Semantic::readStmt(TreeNode *node)
 {
-
+    //要读取得变量的名字
+    string idName = node->getContent();
+    TableNode* element = table.getAllLevel(idName,level);
+    if(element!=nullptr){
+        if(node->childNum()!=0){
+            string s = array(node->getChild(0),element->getArrayEleCnt());
+            if(s!=NULL_STRING)
+                idName.append("@").append(s);
+            else return;
+        }
+        string value = readInput();
+        if(element->getKind()=="int"){
+            if(matchInteger(value)){
+                table.getAllLevel(idName,level)->setIntVal(value);
+                table.getAllLevel(idName,level)->setRealVal(to_string(atof(value.c_str())));
+            }
+            else{
+                string err = "不能把\"";
+                err.append(value).append("\"赋值给变量").append(idName);
+                error(err,node->getLine());
+            }
+        }
+        else if(element->getKind()=="real"){
+            if(matchReal(value)){
+                table.getAllLevel(idName,level)->setRealVal(value);
+            }
+            else if(matchReal(value)){
+                table.getAllLevel(idName,level)->setRealVal(to_string(atoi(value.c_str())));
+            }
+            else{
+                string err = "不能把\"";
+                err.append(value).append("\"赋值给变量").append(idName);
+                error(err,node->getLine());
+            }
+        }
+        else if(element->getKind()=="bool"){
+            if(value=="true"){
+                table.getAllLevel(idName,level)->setStringVal("true");
+            }
+            else if(value=="false"){
+                table.getAllLevel(idName,level)->setStringVal("false");
+            }
+            else{
+                string err = "不能把\"";
+                err.append(value).append("\"赋值给变量").append(idName);
+                error(err,node->getLine());
+            }
+        }
+        else if(element->getKind()=="string"){
+            table.getAllLevel(idName,level);
+        }
+    }
+    else{
+        string err = "变量";
+        err.append(idName).append("在使用前未声明");
+        error(err,node->getLine());
+    }
 }
 
 void Semantic::writeStmt(TreeNode *node)
 {
-
+    string content = node->getContent();
+    string kind = node->getNodekind();
+    //current use cout
+    if(kind=="整数"||kind=="实数"||kind=="字符串"){
+        cout<<content<<endl;
+    }
+    else if(kind==TreeNodeType::IdentifierK){
+        if(checkID(node,level)){
+            if(node->childNum()!=0){
+                string s = array(node->getChild(0),table.getAllLevel(content,level)->getArrayEleCnt());
+                if(s!=NULL_STRING)
+                    content.append("@").append(s);
+                else return;
+            }
+            TableNode* temp = table.getAllLevel(content,level);
+            if(temp->getKind()=="int"){
+                cout<<temp->getIntVal()<<endl;
+            }
+            else if(temp->getKind()=="real"){
+                cout<<temp->getRealVal()<<endl;
+            }
+            else
+                cout<<temp->getStringVal()<<endl;
+        }
+        else return;
+    }
+    else if(content==TokenType::PLUS||content==TokenType::MINUS
+            ||content==TokenType::MULTI||content==TokenType::DIVIDE){
+        string value = expression(node);
+        if(value!=NULL_STRING){
+            cout<<value<<endl;
+        }
+    }
 }
 
 /**
@@ -430,13 +728,13 @@ bool Semantic::condition(TreeNode *node)
                 if(checkID(node->getChild(i),level)){
                     if(node->getChild(i)->childNum()!=0){
                         TableNode* tn = table.getAllLevel(tempContent,level);
-                        string s = array(node->getChild(0),tn->getArrayEleCnt());
+                        string s = array(node->getChild(i)->getChild(0),tn->getArrayEleCnt());
                         if(s != NULL_STRING)
-                            content.append("@").append(s);
+                            tempContent.append("@").append(s);
                         else return false;
                     }
                     TableNode* tmp = table.getAllLevel(tempContent,level);
-                    if(tmp->getKind()==TokenType::LITERAL_INT)
+                    if(tmp->getKind()=="int")
                         results[i] = tmp->getIntVal();
                     else
                         results[i]= tmp->getRealVal();
@@ -458,6 +756,7 @@ bool Semantic::condition(TreeNode *node)
         if(results[0]!=NULL_STRING && results[1]!=NULL_STRING){
             double ele1 = atof(results[0].c_str());
             double ele2 = atof(results[1].c_str());
+            const double eps = 1e-6;
             if(content==TokenType::GT ){
                 if(ele1 > ele2)
                     return true;
@@ -467,11 +766,11 @@ bool Semantic::condition(TreeNode *node)
                     return true;
             }
             else if(content==TokenType::EQUAL){
-                if(results[0]==results[1])
+                if(fabs(ele1-ele2)<eps)
                     return true;
             }
             else{
-                if(results[0]!=results[1]){
+                if(fabs(ele1-ele2)>=eps){
                     return true;
                 }
             }
@@ -489,6 +788,80 @@ bool Semantic::condition(TreeNode *node)
  */
 string Semantic::expression(TreeNode *node)
 {
+    bool isInt = true;
+    string content = node->getContent();
+    string results[2];
+    for(int i = 0; i<node->childNum(); i++){
+        TreeNode* tempNode = node->getChild(i);
+        string kind = tempNode->getNodekind();
+        string tempContent = tempNode->getContent();
+        if(kind=="整数"){
+            results[i] = tempContent;
+        }
+        else if(kind=="实数"){
+            results[i] = tempContent;
+            isInt = false;
+        }
+        else if(kind==TreeNodeType::IdentifierK){
+            if(checkID(tempNode,level)){
+                if (tempNode->childNum() != 0) {
+                string s = array(tempNode->getChild(0), table
+                        .getAllLevel(tempContent, level)
+                        ->getArrayEleCnt());
+                if (s != NULL_STRING)
+                    tempContent += "@" + s;
+                else
+                    return NULL_STRING;
+                }
+                TableNode* temp = table.getAllLevel(tempNode
+                        ->getContent(), level);
+                if (temp->getKind()=="int") {
+                    results[i] = temp->getIntVal();
+                } else if (temp->getKind()=="real") {
+                    results[i] = temp->getRealVal();
+                    isInt = false;
+                }
+            }
+            else return NULL_STRING;
+        }
+        else if(tempContent==TokenType::PLUS||tempContent==TokenType::MINUS||
+                tempContent==TokenType::MULTI||tempContent==TokenType::DIVIDE){
+                string result = expression(node->getChild(i));
+                if(result!=NULL_STRING){
+                    results[i]= result;
+                    if(matchReal(result))
+                        isInt = false;
+                }
+                else return NULL_STRING;
+        }
+
+    }
+    //计算
+    if(isInt){
+        int i1 = atoi(results[0].c_str());
+        int i2 = atoi(results[1].c_str());
+        if(content==TokenType::PLUS)
+            return to_string(i1+i2);
+        else if(content==TokenType::MINUS)
+            return to_string(i1-i2);
+        else if(content==TokenType::MULTI)
+            return to_string(i1*i2);
+        else
+            return to_string(i1/i2);
+
+    }
+    else{
+        double i1 = atof(results[0].c_str());
+        double i2 = atof(results[1].c_str());
+        if(content==TokenType::PLUS)
+            return to_string(i1+i2);
+        else if(content==TokenType::MINUS)
+            return to_string(i1-i2);
+        else if(content==TokenType::MULTI)
+            return to_string(i1*i2);
+        else
+            return to_string(i1/i2);
+    }
     return NULL_STRING;
 }
 
@@ -579,10 +952,41 @@ string Semantic::array(TreeNode *node, int size)
 
 bool Semantic::checkID(TreeNode *node, int level)
 {
-    return false;
+    string idname = node->getContent();
+    if(table.getAllLevel(idname,level)==nullptr){
+        string err = "未定义的标识符";
+        error(err,node->getLine());
+        return false;
+    }
+    else{
+        if(node->childNum()!=0){
+            string tempstr = array(node->getChild(0),table.getAllLevel(idname,level)->getArrayEleCnt());
+            if(tempstr!=NULL_STRING){
+                idname.append("@").append(tempstr);
+            }
+            else{
+                return false;
+            }
+        }
+        TableNode *element = table.getAllLevel(idname,level);
+        if(element->getIntVal()=="" && element->getRealVal()==""  && element->getStringVal()==""){
+            string err = "变量";
+            err.append(idname).append("在使用前未初始化");
+            error(err,node->getLine());
+            return false;
+        }
+        else return true;
+    }
 }
 
 string Semantic::readInput()
 {
-    return "";
+    //将读取的输入作为字符串
+    auto textEdit = this->w->getTextEdit();
+    textEdit->setText("Please Input:\n");
+    auto okBtn = this->w->getOkButton();
+    //okBtn->clicked() = []{}
+    string s;
+    cin>>s;
+    return s;
 }

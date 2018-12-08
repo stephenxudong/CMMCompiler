@@ -5,6 +5,7 @@
 #include "type/TreeNode.h"
 #include "util/Thread.h"
 #include "type/TreeNodeType.h"
+#include "mainwindow.h"
 #include <regex>
 //多线程？？
 #include <QThread>
@@ -19,9 +20,10 @@ private:
     int errorNum = 0;
     vector<string> errors;
     string userInput;
+    MainWindow* w;
 
 public:
-    Semantic(TreeNode* root):root(root){
+    Semantic(TreeNode* root,MainWindow& w):root(root),w(&w){
         errorInfo = "";
         userInput = "";
     }

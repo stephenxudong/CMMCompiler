@@ -233,13 +233,13 @@ TreeNode *Parser::parseIfStmt() {
         if(hasElseBrace){
             while(hasNextToken()){
                 if(curr.getType()!=TokenType::RBRACE)
-                    stmtNode->addChild(parseStmt());
+                    elseNode->addChild(parseStmt());
             }
             checkCurrentType(TokenType::RBRACE,ifnode);
 
         }else{
             if(hasNextToken())
-                stmtNode->addChild(parseStmt());
+                elseNode->addChild(parseStmt());
         }
 
     }
@@ -335,7 +335,7 @@ TreeNode *Parser::parseAssignStmt(bool inFor) {
 
 
 /**
- declStmt -> int|real identifier = exp
+ declStmt -> int|real|bool|string identifier = exp
 
  @return decl-stmt
  */

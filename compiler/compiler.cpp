@@ -4,6 +4,7 @@
 
 #include "compiler.h"
 using namespace std;
+static bool continueFlag = true;
 vector<Token> compiler::lexcial(const char* infile,const char* outpath){
     auto lines = readToLines(infile);
     // 去除单行注释
@@ -16,9 +17,9 @@ vector<Token> compiler::lexcial(const char* infile,const char* outpath){
     fstream fout;
     fout.open(outpath,ios::out);
     if(!vec.empty()){
-        cout<<"Some Errors! Please Check!"<<endl;
+        continueFlag=false;
         for(auto i : vec){
-            fout<<i<<endl;
+            cout<<i<<endl;
         }
     }
     else {
@@ -49,8 +50,35 @@ TreeNode* compiler::parse(vector<Token>& tokens,char* outpath){
         p.printTree(root, 0);
     }
     else{
+        continueFlag=false;
         for(string& i:p.error())
             cout<<i<<endl;
     }
     return root;
+}
+
+void compiler::compile(const char *filepath, MainWindow& w,const char *output)
+{
+    auto tokens = lexcial(filepath,"out.txt");
+    TreeNode* root = nullptr;
+    if(continueFlag){
+        root = parse(tokens);
+    }
+    else{
+        cout<<"Some Lexical Error, Program Exit"<<endl;
+        exit(1);
+    }
+    if(continueFlag){
+        semantic(root,w);
+    }else{
+        cout<<"Some Grammer Error, Program Exit"<<endl;
+        exit(1);
+    }
+
+}
+
+void compiler::semantic(TreeNode *root,MainWindow& w)
+{
+    Semantic s(root);
+    s.run();
 }

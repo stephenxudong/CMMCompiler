@@ -95,7 +95,7 @@ public:
      * @param node
      * @return
      */
-    bool contains(const TableNode& node){
+    bool contains(const TableNode*& node){
         auto i = std::find(table.begin(),table.end(),node);
         if(i!=table.end())
             return true;

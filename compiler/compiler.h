@@ -10,13 +10,16 @@
 #include <map>
 #include "Lexical.h"
 #include "Parser.h"
+#include "Semantic.h"
 #include <iostream>
 #include <fstream>
+#include <mainwindow.h>
 #include "../util/Util.h"
 namespace compiler{
-    //static TableNode *head = new TableNode();//符号表
+    void compile(const char* filepath,MainWindow& w,const char* output=nullptr);
     vector<Token> lexcial(const char* filepath,const char* output=nullptr);
     TreeNode* parse(vector<Token>& tokens,char* output=nullptr);
+    void semantic(TreeNode* root,MainWindow& w);
 }
 
 

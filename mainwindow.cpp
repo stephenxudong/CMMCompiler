@@ -9,6 +9,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    this->textEdit=ui->textEdit;
+    this->okButton = ui->okBtn;
 }
 
 MainWindow::~MainWindow()
@@ -25,13 +27,19 @@ void MainWindow::on_toolButton_clicked()
 
     ui->textEdit->setPlainText(text);
     ui->textEdit->raise();
-    auto tokens = lexcial(fileName.c_str(),"out.txt");
-    auto root = parse(tokens,nullptr);
+    compile(fileName.c_str(),*this);
 }
 
-void MainWindow::on_textEdit_textChanged()
+QToolButton *MainWindow::getOkButton() const
 {
-
+    return okButton;
 }
+
+QTextEdit *MainWindow::getTextEdit() const
+{
+    return textEdit;
+}
+
+
 
 
