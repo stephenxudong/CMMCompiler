@@ -5,7 +5,7 @@
 #include "compiler.h"
 using namespace std;
 static bool continueFlag = true;
-vector<Token> compiler::lexcial(const char* infile,const char* outpath){
+vector<Token> Compiler::lexcial(const char* infile,const char* outpath){
     auto lines = readToLines(infile);
     // 去除单行注释
     preProcessing(lines);
@@ -38,7 +38,7 @@ vector<Token> compiler::lexcial(const char* infile,const char* outpath){
     return tokens;
 }
 
-TreeNode* compiler::parse(vector<Token>& tokens,char* outpath){
+TreeNode* Compiler::parse(vector<Token>& tokens,char* outpath){
     //首先去掉多余的一些符号的token
     eliminate(tokens);
     Parser p(tokens);
@@ -57,7 +57,7 @@ TreeNode* compiler::parse(vector<Token>& tokens,char* outpath){
     return root;
 }
 
-void compiler::compile(const char *filepath, MainWindow& w,const char *output)
+void Compiler::compile(const char *filepath, MainWindow& w,const char *output)
 {
     auto tokens = lexcial(filepath,"out.txt");
     TreeNode* root = nullptr;
@@ -77,8 +77,9 @@ void compiler::compile(const char *filepath, MainWindow& w,const char *output)
 
 }
 
-void compiler::semantic(TreeNode *root,MainWindow& w)
+void Compiler::semantic(TreeNode *root,MainWindow& w)
 {
-    Semantic s(root);
+    Semantic s(root,w);
     s.run();
 }
+

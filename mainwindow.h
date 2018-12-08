@@ -3,7 +3,10 @@
 
 #include <QMainWindow>
 #include <QtWidgets/QTextEdit>
-#include <QtWidgets/QToolButton>
+#include <QtWidgets/QPushButton>
+#include <string>
+using std::string;
+
 namespace Ui {
 class MainWindow;
 }
@@ -19,15 +22,18 @@ public:
 
     QTextEdit *getTextEdit() const;
 
-    QToolButton *getOkButton() const;
+    QPushButton *getOkButton() const;
 
-private slots:
-    void on_toolButton_clicked();
+    string getInput();
+
 
 private:
     Ui::MainWindow *ui;
     QTextEdit* textEdit;
-    QToolButton* okButton;
+    QPushButton* okButton;
+    string input;
+    QThread* t;
+    bool continueFlag;
 };
 
 #endif // MAINWINDOW_H

@@ -9,7 +9,9 @@
 #include <regex>
 //多线程？？
 #include <QThread>
-class Semantic : public Thread
+#include <QMutex>
+#include <QSemaphore>
+class Semantic: public QThread
 {
 private:
     SymbolTable table;//符号表
@@ -21,13 +23,16 @@ private:
     vector<string> errors;
     string userInput;
     MainWindow* w;
+    QMutex m_mutex;
+    bool flag;
 
 public:
-    Semantic(TreeNode* root,MainWindow& w):root(root),w(&w){
-        errorInfo = "";
-        userInput = "";
-    }
+    Semantic(TreeNode* root,MainWindow& w);
     virtual void run();
+    void pause();
+    void resume();
+
+    void setUserInput(const string &value);
 
 private:
 

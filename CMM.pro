@@ -51,7 +51,8 @@ HEADERS += \
     util/Thread.h \
     util/Util.h \
     compiler/Semantic.h \
-    type/SymbolTable.h
+    type/SymbolTable.h \
+    util/control.h
 
 FORMS += \
         mainwindow.ui
@@ -67,4 +68,5 @@ DISTFILES += \
     test/in1.cmm \
     test/while.cmm \
     README.md \
-    out.txt
+    out.txt \
+    test/read_write.cmm

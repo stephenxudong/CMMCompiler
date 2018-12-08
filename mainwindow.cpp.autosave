@@ -48,7 +48,7 @@ MainWindow::MainWindow(QWidget *parent) :
         Semantic* s = dynamic_cast<Semantic*>(this->t);
         s->setUserInput(input);
         s->resume();
-    });
+        });
 }
 
 MainWindow::~MainWindow()

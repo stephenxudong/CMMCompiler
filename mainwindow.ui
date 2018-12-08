@@ -14,7 +14,7 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QToolButton" name="toolButton">
+   <widget class="QPushButton" name="pushButton">
     <property name="geometry">
      <rect>
       <x>80</x>
@@ -30,14 +30,14 @@
    <widget class="QTextEdit" name="textEdit">
     <property name="geometry">
      <rect>
-      <x>70</x>
-      <y>70</y>
-      <width>231</width>
+      <x>30</x>
+      <y>60</y>
+      <width>141</width>
       <height>141</height>
      </rect>
     </property>
    </widget>
-   <widget class="QToolButton" name="okBtn">
+   <widget class="QPushButton" name="okBtn">
     <property name="geometry">
      <rect>
       <x>210</x>
@@ -50,6 +50,16 @@
      <string>确定</string>
     </property>
    </widget>
+   <widget class="QTextEdit" name="inputText">
+    <property name="geometry">
+     <rect>
+      <x>220</x>
+      <y>60</y>
+      <width>141</width>
+      <height>141</height>
+     </rect>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
@@ -57,7 +67,7 @@
      <x>0</x>
      <y>0</y>
      <width>400</width>
-     <height>22</height>
+     <height>28</height>
     </rect>
    </property>
   </widget>

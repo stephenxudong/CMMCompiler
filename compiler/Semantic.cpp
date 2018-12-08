@@ -1,7 +1,10 @@
 #include "Semantic.h"
 #include <math.h>
+#include "compiler/compiler.h"
+
 #define NULL_STRING ""
 
+extern QWaitCondition semaphore;
 bool Semantic::matchInteger(const string &s) {
     // r2 为多0的情况，需要排除
     return regex_match(s, regex("^-?\\d+$"))
@@ -14,10 +17,35 @@ bool Semantic::matchReal(const string &s) {
             && !regex_match(s, regex("^(-?0{2,})(\\.\\d+)+$"));;
 }
 
+void Semantic::setUserInput(const string &value)
+{
+    userInput = value;
+}
+
+Semantic::Semantic(TreeNode *root, MainWindow &w):w(&w){
+    this->root = root;
+    errorInfo = "";
+    userInput = "";
+}
+
 void Semantic::run()
 {
     table.clear();
     statement(root);
+}
+
+void Semantic::pause()
+{
+    this->m_mutex.lock();
+    this->flag = false;
+    this->m_mutex.unlock();
+}
+
+void Semantic::resume()
+{
+    this->m_mutex.lock();
+    this->flag = true;
+    this->m_mutex.unlock();
 }
 
 void Semantic::error(string err, int line)
@@ -982,11 +1010,20 @@ bool Semantic::checkID(TreeNode *node, int level)
 string Semantic::readInput()
 {
     //将读取的输入作为字符串
-    auto textEdit = this->w->getTextEdit();
-    textEdit->setText("Please Input:\n");
-    auto okBtn = this->w->getOkButton();
+//    QMutex qmutex;
+//    qmutex.lock();
+//    auto textEdit = this->w->getTextEdit();
+//    textEdit->setText("Please Input:\n");
+//    compile::semaphore.wait(&qmutex);
+//    qmutex.unlock();
     //okBtn->clicked() = []{}
-    string s;
-    cin>>s;
-    return s;
+    this->pause();
+    while(!this->flag){
+        sleep(1);
+    }
+
+    if(userInput==""){
+        throw runtime_error("Input is NULL");
+    }
+    return userInput;
 }
