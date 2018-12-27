@@ -30,8 +30,8 @@ public:
 
 private slots:
     void on_textEdit_textChanged();
-
     void on_inputText_textChanged();
+    void displayOutput(const QString& s);
 
 private:
     Ui::MainWindow *ui;

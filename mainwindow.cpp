@@ -65,7 +65,8 @@ MainWindow::MainWindow(QWidget *parent) :
             ui->textEdit->setText("请先进行语法分析");
             return;
         }
-        this->t = new Semantic(root,*this);
+        this->t = new Semantic(root);
+        connect(this->t,SIGNAL(output(const QString&)),this,SLOT(this->displayOutput(const QString&)));
         t->start();
     });
 
@@ -134,4 +135,11 @@ void MainWindow::on_textEdit_textChanged()
 void MainWindow::on_inputText_textChanged()
 {
     ui->inputText->setTextColor(Qt::black);
+}
+
+void MainWindow::displayOutput(const QString &s)
+{
+
+    this->ui->textEdit->append(s);
+    this->ui->textEdit->append("\n");
 }

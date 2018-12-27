@@ -13,6 +13,7 @@
 #include <QSemaphore>
 class Semantic: public QThread
 {
+    Q_OBJECT
 private:
     SymbolTable table;//符号表
     TreeNode* root;//抽象语法树
@@ -27,7 +28,7 @@ private:
     bool flag;
 
 public:
-    Semantic(TreeNode* root,MainWindow& w);
+    explicit Semantic(TreeNode* root,QObject* parent=0);
     virtual void run();
     void pause();
     void resume();
@@ -39,7 +40,6 @@ private:
     void error(string err, int line);
     bool matchInteger(const string &s);
     bool matchReal(const string &s);
-
 
     void statement(TreeNode* root);
     void declare(TreeNode* node);
@@ -57,7 +57,8 @@ private:
 
     string readInput();
 
-
+signals:
+    void output(const QString&);
 
 
 

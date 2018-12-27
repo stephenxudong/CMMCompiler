@@ -22,7 +22,7 @@ void Semantic::setUserInput(const string &value)
     userInput = value;
 }
 
-Semantic::Semantic(TreeNode *root, MainWindow &w):w(&w){
+Semantic::Semantic(TreeNode *root, QObject* parent):QThread (parent){
     this->root = root;
     errorInfo = "";
     userInput = "";
@@ -677,6 +677,7 @@ void Semantic::writeStmt(TreeNode *node)
     //current use cout
     if(kind=="整数"||kind=="实数"||kind=="字符串"){
         cout<<content<<endl;
+        emit output(ws.fromStdString(content));
     }
     else if(kind==TreeNodeType::IdentifierK){
         if(checkID(node,level)){
@@ -688,15 +689,17 @@ void Semantic::writeStmt(TreeNode *node)
             }
             TableNode* temp = table.getAllLevel(content,level);
             if(temp->getKind()=="int"){
-                this->w->getTextEdit()->append(ws.fromStdString(temp->getIntVal()).append("\n"));
+                emit output(ws.fromStdString(temp->getIntVal()));
                 cout<<temp->getIntVal()<<endl;
             }
             else if(temp->getKind()=="real"){
-                this->w->getTextEdit()->append(ws.fromStdString(temp->getRealVal()).append("\n"));
+                emit output(ws.fromStdString(temp->getRealVal()));
                 cout<<temp->getRealVal()<<endl;
             }
-            else
+            else{
+                emit output(ws.fromStdString(temp->getStringVal()));
                 cout<<temp->getStringVal()<<endl;
+            }
         }
         else return;
     }
@@ -704,7 +707,6 @@ void Semantic::writeStmt(TreeNode *node)
             ||content==TokenType::MULTI||content==TokenType::DIVIDE){
         string value = expression(node);
         if(value!=NULL_STRING){
-            this->w->getTextEdit()->append(ws.fromStdString(value).append("\n"));
             cout<<value<<endl;
         }
     }
