@@ -13,17 +13,20 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    this->textEdit=ui->textEdit;
-    this->input = "";
     QColor color;
     ui->fileText->setTextColor(Qt::black);
+    ui->fileText->setFont(QFont(tr("Consolas"), 14));
     ui->inputText->setTextColor(Qt::black);
     ui->textEdit->setTextColor(Qt::black);
+    ui->outTextEdit->setTextColor(Qt::black);
+
     connect(ui->pushButton,&QPushButton::clicked,this,[=]{
         string fileName;
         fileName = QFileDialog::getOpenFileName(this,"../","", tr("")).toStdString();
         QString text;
         this->sourceCode= readToLines(fileName.c_str());
+        if(ui->fileText->toPlainText()!="")
+            ui->fileText->clear();
         for(auto line : sourceCode){
             ui->fileText->append(text.fromStdString(line).append("\n"));
         }
@@ -65,8 +68,8 @@ MainWindow::MainWindow(QWidget *parent) :
             ui->textEdit->setText("请先进行语法分析");
             return;
         }
-        this->t = new Semantic(root);
-        connect(this->t,SIGNAL(output(const QString&)),this,SLOT(this->displayOutput(const QString&)));
+        this->t = new Semantic(this->root);
+        connect(t,SIGNAL(output(const QString&)),this,SLOT(displayOutput(const QString&)));
         t->start();
     });
 
@@ -105,7 +108,7 @@ void MainWindow::drawTree(TreeNode *root)
 
     for(size_t i = 0; i < root->childNum(); i++){
         childrenItems = drawNode(root->getChild(i));
-        if(childrenItems.size()==0)
+        if(childrenItems.size()!=0)
             item->appendRow(childrenItems);
     }
     items.append(item);
@@ -120,7 +123,7 @@ QList<QStandardItem *> MainWindow::drawNode(TreeNode *node)
       QList<QStandardItem*>items, childrenItems;
       for(size_t i = 0; i < node->childNum();i++){
           childrenItems = drawNode(node->getChild(i));
-          if(childrenItems.size()==0)
+          if(childrenItems.size()!=0)
               item->appendRow(childrenItems);
       }
       items.append(item);
@@ -139,7 +142,10 @@ void MainWindow::on_inputText_textChanged()
 
 void MainWindow::displayOutput(const QString &s)
 {
+    this->ui->outTextEdit->append(s);
+}
 
-    this->ui->textEdit->append(s);
-    this->ui->textEdit->append("\n");
+void MainWindow::on_outTextEdit_textChanged()
+{
+    this->ui->outTextEdit->setTextColor(Qt::black);
 }

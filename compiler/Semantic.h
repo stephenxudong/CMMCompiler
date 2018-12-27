@@ -11,9 +11,21 @@
 #include <QThread>
 #include <QMutex>
 #include <QSemaphore>
+#include <QObject>
 class Semantic: public QThread
 {
     Q_OBJECT
+public:
+    explicit Semantic(TreeNode* root,QObject* parent=nullptr);
+    ~Semantic()=default;
+
+    void pause();
+    void resume();
+    void setUserInput(const string &value);
+    void setRoot(TreeNode* root);
+protected:
+    void run();
+
 private:
     SymbolTable table;//符号表
     TreeNode* root;//抽象语法树
@@ -26,14 +38,6 @@ private:
     MainWindow* w;
     QMutex m_mutex;
     bool flag;
-
-public:
-    explicit Semantic(TreeNode* root,QObject* parent=0);
-    virtual void run();
-    void pause();
-    void resume();
-
-    void setUserInput(const string &value);
 
 private:
 
@@ -63,5 +67,4 @@ signals:
 
 
 };
-
 #endif // SEMANTIC_H

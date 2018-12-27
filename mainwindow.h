@@ -33,6 +33,8 @@ private slots:
     void on_inputText_textChanged();
     void displayOutput(const QString& s);
 
+    void on_outTextEdit_textChanged();
+
 private:
     Ui::MainWindow *ui;
     QTextEdit* textEdit;

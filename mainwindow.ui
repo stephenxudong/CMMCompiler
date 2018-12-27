@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>699</width>
-    <height>471</height>
+    <width>800</width>
+    <height>601</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -36,7 +36,7 @@
       <x>30</x>
       <y>60</y>
       <width>321</width>
-      <height>311</height>
+      <height>471</height>
      </rect>
     </property>
     <property name="focusPolicy">
@@ -46,7 +46,7 @@
    <widget class="QPushButton" name="okBtn">
     <property name="geometry">
      <rect>
-      <x>620</x>
+      <x>710</x>
       <y>30</y>
       <width>68</width>
       <height>35</height>
@@ -59,10 +59,10 @@
    <widget class="QTextEdit" name="inputText">
     <property name="geometry">
      <rect>
-      <x>530</x>
+      <x>620</x>
       <y>60</y>
       <width>151</width>
-      <height>131</height>
+      <height>61</height>
      </rect>
     </property>
    </widget>
@@ -108,7 +108,7 @@
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
-      <x>530</x>
+      <x>620</x>
       <y>40</y>
       <width>51</width>
       <height>20</height>
@@ -123,12 +123,12 @@
      <rect>
       <x>360</x>
       <y>40</y>
-      <width>59</width>
+      <width>111</width>
       <height>16</height>
      </rect>
     </property>
     <property name="text">
-     <string>输出</string>
+     <string>词法分析输出</string>
     </property>
    </widget>
    <widget class="QTextEdit" name="textEdit">
@@ -136,19 +136,55 @@
      <rect>
       <x>360</x>
       <y>60</y>
-      <width>151</width>
-      <height>311</height>
+      <width>241</width>
+      <height>471</height>
      </rect>
     </property>
    </widget>
    <widget class="QTreeView" name="treeView">
     <property name="geometry">
      <rect>
-      <x>530</x>
-      <y>190</y>
+      <x>620</x>
+      <y>290</y>
       <width>151</width>
-      <height>181</height>
+      <height>241</height>
      </rect>
+    </property>
+   </widget>
+   <widget class="QTextEdit" name="outTextEdit">
+    <property name="geometry">
+     <rect>
+      <x>620</x>
+      <y>150</y>
+      <width>151</width>
+      <height>111</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_3">
+    <property name="geometry">
+     <rect>
+      <x>620</x>
+      <y>270</y>
+      <width>71</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>抽象语法树</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_4">
+    <property name="geometry">
+     <rect>
+      <x>620</x>
+      <y>130</y>
+      <width>59</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>输出</string>
     </property>
    </widget>
    <zorder>pushButton</zorder>
@@ -162,13 +198,16 @@
    <zorder>inputText</zorder>
    <zorder>textEdit</zorder>
    <zorder>treeView</zorder>
+   <zorder>outTextEdit</zorder>
+   <zorder>label_3</zorder>
+   <zorder>label_4</zorder>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>699</width>
+     <width>800</width>
      <height>22</height>
     </rect>
    </property>

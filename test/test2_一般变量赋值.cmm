@@ -1,22 +1,22 @@
 
 
-//read赋值
+//read assignment 
 real r;
 read(r);
 write(r);
 
-//声明时赋值
+//assign values in declearation
 int aa = 23,ab = (-4);
 real b ,c =2.55;
 
-//算术运算赋值
+//assign values with arithmatic result
 int a = 15 - 3 * ( 150 / 3 / 10);
 if(a == 0)
 	write(1);
 else
 	write(0);
 
-//变量传递
+//pass values among identifiers
 real r2 = 5;
 int a2 = 3;
 r2 = a2;
@@ -27,8 +27,8 @@ else
 r2 = a2 ;
 write(r2);
 
-/*output:
- *233		#输入的数字
+/*Expected output:
+ *233		# your input
  *233.0
  *1
  *1

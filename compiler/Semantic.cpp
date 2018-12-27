@@ -22,7 +22,12 @@ void Semantic::setUserInput(const string &value)
     userInput = value;
 }
 
-Semantic::Semantic(TreeNode *root, QObject* parent):QThread (parent){
+void Semantic::setRoot(TreeNode *root)
+{
+    this->root= root;
+}
+
+Semantic::Semantic(TreeNode* root,QObject* parent):QThread (parent){
     this->root = root;
     errorInfo = "";
     userInput = "";
@@ -620,6 +625,7 @@ void Semantic::readStmt(TreeNode *node)
                 idName.append("@").append(s);
             else return;
         }
+        emit this->output(QString::fromStdString("Please input in inputTextArea!"));
         string value = readInput();
         if(element->getKind()=="int"){
             if(matchInteger(value)){
@@ -677,7 +683,7 @@ void Semantic::writeStmt(TreeNode *node)
     //current use cout
     if(kind=="整数"||kind=="实数"||kind=="字符串"){
         cout<<content<<endl;
-        emit output(ws.fromStdString(content));
+        emit this->output(ws.fromStdString(content));
     }
     else if(kind==TreeNodeType::IdentifierK){
         if(checkID(node,level)){
@@ -689,15 +695,15 @@ void Semantic::writeStmt(TreeNode *node)
             }
             TableNode* temp = table.getAllLevel(content,level);
             if(temp->getKind()=="int"){
-                emit output(ws.fromStdString(temp->getIntVal()));
+                emit this->output(ws.fromStdString(temp->getIntVal()));
                 cout<<temp->getIntVal()<<endl;
             }
             else if(temp->getKind()=="real"){
-                emit output(ws.fromStdString(temp->getRealVal()));
+                emit this->output(ws.fromStdString(temp->getRealVal()));
                 cout<<temp->getRealVal()<<endl;
             }
             else{
-                emit output(ws.fromStdString(temp->getStringVal()));
+                emit this->output(ws.fromStdString(temp->getStringVal()));
                 cout<<temp->getStringVal()<<endl;
             }
         }
@@ -707,6 +713,7 @@ void Semantic::writeStmt(TreeNode *node)
             ||content==TokenType::MULTI||content==TokenType::DIVIDE){
         string value = expression(node);
         if(value!=NULL_STRING){
+            emit this->output(ws.fromStdString(value));
             cout<<value<<endl;
         }
     }

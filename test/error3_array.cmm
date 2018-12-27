@@ -1,30 +1,18 @@
-/** 数组报错 测试
- *
- * 数组报错 测试 主要是：
- * 	1.数组越界
- * 	2.数组下标
- *
- */
-
-real R[6];	//声明实数数组
-int I[2];	//声明整数数组
+real R[6];	//declear int array 
+int I[2];	//declear real array
 
 int i=0;
 int j=1,k=0;
 
-//下标无效
+// illegal array index
 I[k-j] = -1;
 
-int a = j/(i-k);
-//数组越界
+int a = j/(i-k);//divide zero!!!
+
+//array out_of_range
 while(i<7){
 	R[i] = i;
 	i=i+1;
 }
 
-/*output:
- *报错：
- * 1.数组下标不能为负数
- * 2.数组下标越界
- *///:~
  

@@ -1,17 +1,17 @@
 /** 
- * 标志符错误测试
+ * Identifier Test 
  *
- * 正确的标识符是以字母、数字、下划线组成，
- * 只能以字母开头且不能以下划线结束
+ * Legal Identifiers consists of alpha, numbers or '_'
+ * end with alpha or '_'
  *
  */
 
-//测试标识符是否合法
-int _a;         //下划线开头
-real 3_a;	//数字开头
-int a_;		//下划线结尾
-int @a@com;	//非法字符
+//test these identifiers are legal or not
+int _a;         //start with '_'
+real 3_a;	//start with number
+int a_;		//end with '_'
+int @a@com;	//illegal character
 
 /*output
- *报错
+ *some errors
  *///:~

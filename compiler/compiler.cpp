@@ -60,7 +60,7 @@ void Compiler::compile(const char *filepath, MainWindow& w,const char *output)
 
 void Compiler::semantic(TreeNode *root,MainWindow& w)
 {
-    Semantic s(root);
-    s.run();
+//    Semantic s(root);
+//    s.run();
 }
 
