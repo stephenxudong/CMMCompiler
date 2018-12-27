@@ -9,8 +9,6 @@
  *		3)变量赋值; 
  *		4)read赋值
  *
- * 2010-12-19
- * 吴文苑
  */
 
 real realArray[6]; //声明实数数组
@@ -27,8 +25,8 @@ realArray[1] = a;
 realArray[2] = intArray[0];
 a = 0.9;
 realArray[3] = a;
-realArray[4] = 5 - 2 / (4.0 - 3) * 2.5 + 0.01; 
-
+//realArray[4] = 5 - 2 / (4.0 - 3) * 2.5 + 0.01; 
+realArray[4] = 0.01;
 read(realArray[5]);
 
 //打印数组

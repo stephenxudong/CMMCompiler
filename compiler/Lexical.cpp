@@ -35,6 +35,8 @@ void Lexical::parseLine(const string& currLine, int lineNum) {
     
     for(int i = 0; i < chars.size(); i++){
         char ch = chars.at(i);
+        string temp;
+        string c;
         if (!comment){
             if(this->validate(ch)){
                 // 有效字符
@@ -236,12 +238,16 @@ void Lexical::parseLine(const string& currLine, int lineNum) {
                         state = 0;
                         break;
                     case 5:
-                        if(ch==' '){//表示是二元运算符
+                        temp = tokens[tokens.size()-1].getType();
+                        c = tokens[tokens.size()-1].getText();
+                        if((temp==TokenType::IDENTIFIER||temp==TokenType::LITERAL_REAL
+                                ||temp==TokenType::LITERAL_INT||c==")"||c=="]")){
                             this->tokens.push_back(Token(TokenType::MINUS, "-", lineNum, i));
                             i--;
                             state = 0;
                         }
-                        else if(isDigit(ch) && !isDigit(chars.at(i-3)) && !isLetter(chars.at(i-3))){
+                        else{
+                            //if(isDigit(ch) && !isDigit(chars.at(i-3)) && !isLetter(chars.at(i-3)))
                             //表示的是负数,即一元运算符
                             i--;//现需要回退
                             begin = i;
@@ -353,7 +359,8 @@ bool Lexical::mathchIdentifier(const string &s) {
 bool Lexical::matchKey(const string &s) {
     return !s.compare("if") || !s.compare("else") || !s.compare("read") ||
            !s.compare("write")|| !s.compare("int") || !s.compare("bool") ||
-           !s.compare("real")  || !s.compare("while")||!s.compare("string");
+           !s.compare("real")  || !s.compare("while")||!s.compare("string")
+            ||!s.compare("for");
 }
 
 bool Lexical::validate(const char ch) { 

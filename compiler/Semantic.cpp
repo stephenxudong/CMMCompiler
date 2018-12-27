@@ -1,7 +1,7 @@
 #include "Semantic.h"
 #include <math.h>
 #include "compiler/compiler.h"
-
+#include <QString>
 #define NULL_STRING ""
 
 extern QWaitCondition semaphore;
@@ -53,7 +53,9 @@ void Semantic::error(string err, int line)
     string s  = "ERROR: 第";
     s.append(to_string(line)).append("行： ").append(err);
     //语义错误直接输出
-    cout<<s<<endl;
+    QString qs;
+    w->getTextEdit()->append(qs.fromStdString(s).append("\n"));
+//    cout<<s<<endl;
     this->errors.push_back(s);
 }
 
@@ -133,11 +135,11 @@ void Semantic::declare(TreeNode *node)
                         else if(valNode->getNodekind()==TreeNodeType::IdentifierK){
                             if(checkID(valNode,level)){
                                 if(table.getAllLevel(valNode->getContent(),level)->getKind()
-                                        ==TokenType::LITERAL_INT){
+                                        =="int"){
                                     element->setIntVal(table.getAllLevel(valNode->getContent(),level)->getIntVal());
                                     element->setRealVal(table.getAllLevel(valNode->getContent(),level)->getRealVal());
                                 }
-                                else if(value==TokenType::LITERAL_REAL){
+                                else if(value=="real"){
                                     string err = "value和类型不匹配:浮点数不能复制给int型变量";
                                     error(err,valNode->getLine());
                                 }
@@ -428,7 +430,7 @@ void Semantic::assign(TreeNode *node)
         }
     }
     else{
-        string err = "变量为定义";
+        string err = "变量未定义";
         error(err,node->getLine());
     }
     //赋值语句左半部分类型
@@ -455,7 +457,7 @@ void Semantic::assign(TreeNode *node)
         value = node2Val;
         node2kind = "bool";
     }
-    else if(node2kind=="标识符"){
+    else if(node2kind==TreeNodeType::IdentifierK){
         if(checkID(node2,level)){
             if(node2->childNum()!=0){
                 string s = array(node2->getChild(0),table.getAllLevel(node2Val,level)->getArrayEleCnt());
@@ -631,7 +633,7 @@ void Semantic::readStmt(TreeNode *node)
             }
         }
         else if(element->getKind()=="real"){
-            if(matchReal(value)){
+            if(matchInteger(value)){
                 table.getAllLevel(idName,level)->setRealVal(value);
             }
             else if(matchReal(value)){
@@ -669,6 +671,7 @@ void Semantic::readStmt(TreeNode *node)
 
 void Semantic::writeStmt(TreeNode *node)
 {
+    QString ws;
     string content = node->getContent();
     string kind = node->getNodekind();
     //current use cout
@@ -685,9 +688,11 @@ void Semantic::writeStmt(TreeNode *node)
             }
             TableNode* temp = table.getAllLevel(content,level);
             if(temp->getKind()=="int"){
+                this->w->getTextEdit()->append(ws.fromStdString(temp->getIntVal()).append("\n"));
                 cout<<temp->getIntVal()<<endl;
             }
             else if(temp->getKind()=="real"){
+                this->w->getTextEdit()->append(ws.fromStdString(temp->getRealVal()).append("\n"));
                 cout<<temp->getRealVal()<<endl;
             }
             else
@@ -699,6 +704,7 @@ void Semantic::writeStmt(TreeNode *node)
             ||content==TokenType::MULTI||content==TokenType::DIVIDE){
         string value = expression(node);
         if(value!=NULL_STRING){
+            this->w->getTextEdit()->append(ws.fromStdString(value).append("\n"));
             cout<<value<<endl;
         }
     }
@@ -921,7 +927,7 @@ string Semantic::array(TreeNode *node, int size)
     else if(node->getNodekind()==TreeNodeType::IdentifierK){
         if(checkID(node,level)){
             TableNode* temp = table.getAllLevel(node->getContent(),level);
-            if(temp->getKind()==TokenType::LITERAL_INT){
+            if(temp->getKind()=="int"){
                 int i = atoi(temp->getIntVal().c_str());
                 if(i>-1 && i <size)
                     return temp->getIntVal();

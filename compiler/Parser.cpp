@@ -35,6 +35,8 @@ TreeNode *Parser::parseStmt() {
         tmpNode = parseWhileStmt();
     else if(!type.compare(TokenType::READ))
         tmpNode = parseReadStmt();
+    else if(!type.compare(TokenType::FOR))
+        tmpNode = parseForStmt();
     else if(!type.compare(TokenType::WRITE))
         tmpNode = parseWriteStmt();
     else if(!type.compare(TokenType::IDENTIFIER))
@@ -53,7 +55,7 @@ TreeNode *Parser::parseStmt() {
 TreeNode *Parser::parseForStmt()
 {
     bool hasBrace = true;
-    TreeNode* forNode = new TreeNode("Keyword",TreeNodeType::ForK);
+    TreeNode* forNode = new TreeNode(TreeNodeType::ForK,"for",curr.getLine());
     nextToken();
     //Left Paren
     if(curr.getType()==TokenType::LPAREN){
@@ -91,7 +93,7 @@ TreeNode *Parser::parseForStmt()
     }
     //change
     TreeNode* changeNode = new TreeNode("Change","Change",this->curr.getLine());
-    changeNode->addChild(parseAssignStmt());
+    changeNode->addChild(parseAssignStmt(true));
     forNode->addChild(changeNode);
     //Right Paren
     if(curr.getType()==TokenType::RPAREN){
@@ -108,6 +110,7 @@ TreeNode *Parser::parseForStmt()
     }
 
     TreeNode* stmtNode = new TreeNode(TreeNodeType::Stmtk,"Statements",curr.getLine());
+    forNode->addChild(stmtNode);
     if(hasBrace){
         while(hasNextToken()){
             if(curr.getType()!=TokenType::RBRACE)
@@ -122,10 +125,10 @@ TreeNode *Parser::parseForStmt()
                 break;
             }
         }
-        if(curr.getType()==TokenType::RPAREN){
+        if(curr.getType()==TokenType::RBRACE){
             nextToken();
         }else{
-            string error = "for 循环缺少右括号\")\" ";
+            string error = "for 循环缺少右括号\"}\" ";
             this->error(error);
             forNode->child.push_back(new TreeNode(TreeNodeType::ErrorK));
         }
@@ -417,7 +420,7 @@ TreeNode *Parser::parseReadStmt() {
         TreeNode* tmpnode = new TreeNode(TreeNodeType::IdentifierK,curr.getText(),curr.getLine());
         nextToken();
         if(curr.getType()==TokenType::LBRACKET)
-            node->addChild(array());
+            tmpnode->addChild(array());
         node->addChild(tmpnode);
     }else{
         string err = "Read语句中此处应该是标识符";

@@ -6,20 +6,20 @@
  * 	2.语句执行
  * 	3.IF-ELSE 与 WHILE 混合 嵌套
  * 
- * 2010-12-19
- * 吴文苑
  */
 
 int a = 4;
 while(a <> 0){
 	int j = a;
-	while(j <> 0){
-		if(j/2 <> 1)
-			write(j);
-		j = j-1;	
-	}
-	if( a < 2)
+	
+	if(a < 2){
 		write(a);
+		while(j <> 0){
+			if(j/2 <> 1)
+				write(j);
+			j = j-1;
+					
+	}
 	else
 		write(a+3);
 	a = a -1;

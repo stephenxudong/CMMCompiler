@@ -18,9 +18,11 @@
 #include <QWaitCondition>
 namespace Compiler{
     static QWaitCondition semaphore;
+    static bool continueFlag = true;
     void compile(const char* filepath,MainWindow& w,const char* output=nullptr);
-    vector<Token> lexcial(const char* filepath,const char* output=nullptr);
-    TreeNode* parse(vector<Token>& tokens,char* output=nullptr);
+
+    vector<Token> lexcial(vector<string>& lines,vector<string>& errors);
+    TreeNode* parse(vector<Token>& tokens,vector<string>& errors);
     void semantic(TreeNode* root,MainWindow& w);
 }
 
