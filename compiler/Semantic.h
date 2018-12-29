@@ -35,7 +35,6 @@ private:
     int errorNum = 0;
     vector<string> errors;
     string userInput;
-    MainWindow* w;
     QMutex m_mutex;
     bool flag;
 

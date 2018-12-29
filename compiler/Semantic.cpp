@@ -58,9 +58,7 @@ void Semantic::error(string err, int line)
     string s  = "ERROR: 第";
     s.append(to_string(line)).append("行： ").append(err);
     //语义错误直接输出
-    QString qs;
-    w->getTextEdit()->append(qs.fromStdString(s).append("\n"));
-//    cout<<s<<endl;
+    emit this->output(QString::fromStdString(s));
     this->errors.push_back(s);
 }
 
@@ -1024,14 +1022,6 @@ bool Semantic::checkID(TreeNode *node, int level)
 
 string Semantic::readInput()
 {
-    //将读取的输入作为字符串
-//    QMutex qmutex;
-//    qmutex.lock();
-//    auto textEdit = this->w->getTextEdit();
-//    textEdit->setText("Please Input:\n");
-//    compile::semaphore.wait(&qmutex);
-//    qmutex.unlock();
-    //okBtn->clicked() = []{}
     this->pause();
     while(!this->flag){
         sleep(1);

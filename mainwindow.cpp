@@ -17,7 +17,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->fileText->setTextColor(Qt::black);
     ui->fileText->setFont(QFont(tr("Consolas"), 14));
     ui->inputText->setTextColor(Qt::black);
-    ui->textEdit->setTextColor(Qt::black);
+    this->ui->lexicalOutText->setTextColor(Qt::black);
     ui->outTextEdit->setTextColor(Qt::black);
 
     connect(ui->pushButton,&QPushButton::clicked,this,[=]{
@@ -28,44 +28,52 @@ MainWindow::MainWindow(QWidget *parent) :
         if(ui->fileText->toPlainText()!="")
             ui->fileText->clear();
         for(auto line : sourceCode){
-            ui->fileText->append(text.fromStdString(line).append("\n"));
+            ui->fileText->append(text.fromStdString(line));
         }
     });
     connect(ui->lexicalBtn,&QPushButton::clicked,this,[=]{
+        QString infile = this->ui->fileText->toPlainText();
+        stringstream f(infile.toStdString());
+        string line;
+        while(getline(f,line)){
+            this->sourceCode.push_back(line);
+        }
         if(this->sourceCode.size()==0){
-            ui->textEdit->setText("没有打开文件，请重试");
+            ui->outTextEdit->setText("没有打开文件，请重试");
             return;
         }
         this->tokens = lexcial(this->sourceCode,errors);
         QString s;
         if(errors.size()!=0){
-            ui->textEdit->setText("存在一些词法错误:\n");
+            ui->outTextEdit->setText("存在一些词法错误:\n");
             for(auto i : errors)
-                ui->textEdit->append(s.fromStdString(i));
+                ui->outTextEdit->append(s.fromStdString(i));
         }
         else{
+            if(ui->lexicalOutText->toPlainText()!="")
+                ui->lexicalOutText->clear();
             for(auto i : tokens)
-                ui->textEdit->append(s.fromStdString(i.toString()).append("\n"));
+                ui->lexicalOutText->append(s.fromStdString(i.toString()).append("\n"));
         }
 
     });
     connect(ui->syntaxBtn,&QPushButton::clicked,this,[=]{
         if(this->tokens.size()==0){
-            ui->textEdit->setText("请先进行词法分析");
+            ui->outTextEdit->setText("请先进行词法分析");
             return;
         }
         QString s;
         this->root = parse(tokens,errors);
         if(errors.size()!=0){
-            ui->textEdit->setText("存在一些语法错误:\n");
+            ui->outTextEdit->setText("存在一些语法错误:\n");
             for(auto i : errors)
-                ui->textEdit->append(s.fromStdString(i));
+                ui->outTextEdit->append(s.fromStdString(i));
         }
         this->drawTree(this->root);
     });
     connect(ui->semanticBtn,&QPushButton::clicked,this,[=]{
         if(this->root==nullptr){
-            ui->textEdit->setText("请先进行语法分析");
+            ui->outTextEdit->setText("请先进行语法分析");
             return;
         }
         this->t = new Semantic(this->root);
@@ -104,7 +112,7 @@ void MainWindow::drawTree(TreeNode *root)
     QStandardItemModel* model = new QStandardItemModel(ui->treeView);
     model->setHorizontalHeaderLabels(QStringList()<<QStringLiteral("structure"));
     QList<QStandardItem*> items,childrenItems;
-    QStandardItem* item = new QStandardItem(QString::fromStdString(root->getContent()));
+    QStandardItem* item = new QStandardItem(QString::fromStdString(root->getNodekind()));
 
     for(size_t i = 0; i < root->childNum(); i++){
         childrenItems = drawNode(root->getChild(i));
@@ -119,7 +127,7 @@ void MainWindow::drawTree(TreeNode *root)
 
 QList<QStandardItem *> MainWindow::drawNode(TreeNode *node)
 {
-    QStandardItem* item = new QStandardItem(QString::fromStdString(node->getContent()));
+    QStandardItem* item = new QStandardItem(QString::fromStdString(node->getNodekind()));
       QList<QStandardItem*>items, childrenItems;
       for(size_t i = 0; i < node->childNum();i++){
           childrenItems = drawNode(node->getChild(i));
@@ -128,11 +136,6 @@ QList<QStandardItem *> MainWindow::drawNode(TreeNode *node)
       }
       items.append(item);
       return items;
-}
-
-void MainWindow::on_textEdit_textChanged()
-{
-    ui->textEdit->setTextColor(Qt::black);
 }
 
 void MainWindow::on_inputText_textChanged()
@@ -148,4 +151,14 @@ void MainWindow::displayOutput(const QString &s)
 void MainWindow::on_outTextEdit_textChanged()
 {
     this->ui->outTextEdit->setTextColor(Qt::black);
+}
+
+void MainWindow::on_lexicalOutText_textChanged()
+{
+    this->ui->lexicalOutText->setTextColor(Qt::black);
+}
+
+void MainWindow::on_fileText_textChanged()
+{
+    this->ui->fileText->setTextColor(Qt::black);
 }

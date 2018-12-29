@@ -29,11 +29,14 @@ public:
     string getInput();
 
 private slots:
-    void on_textEdit_textChanged();
     void on_inputText_textChanged();
     void displayOutput(const QString& s);
 
     void on_outTextEdit_textChanged();
+
+    void on_lexicalOutText_textChanged();
+
+    void on_fileText_textChanged();
 
 private:
     Ui::MainWindow *ui;
