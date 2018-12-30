@@ -5,7 +5,8 @@
 #include "compiler/Parser.h"
 #include "compiler/Semantic.h"
 #include <QMutex>
-
+#include <iostream>
+#include <sstream>
 extern bool Compiler::continueFlag;
 using namespace Compiler;
 MainWindow::MainWindow(QWidget *parent) :
@@ -35,6 +36,7 @@ MainWindow::MainWindow(QWidget *parent) :
         QString infile = this->ui->fileText->toPlainText();
         stringstream f(infile.toStdString());
         string line;
+        this->sourceCode.clear();
         while(getline(f,line)){
             this->sourceCode.push_back(line);
         }
@@ -45,9 +47,11 @@ MainWindow::MainWindow(QWidget *parent) :
         this->tokens = lexcial(this->sourceCode,errors);
         QString s;
         if(errors.size()!=0){
-            ui->outTextEdit->setText("存在一些词法错误:\n");
+            if(ui->lexicalOutText->toPlainText()!="")
+                ui->lexicalOutText->clear();
+            ui->lexicalOutText->setText("存在一些词法错误:\n");
             for(auto i : errors)
-                ui->outTextEdit->append(s.fromStdString(i));
+                ui->lexicalOutText->append(s.fromStdString(i));
         }
         else{
             if(ui->lexicalOutText->toPlainText()!="")

@@ -31,7 +31,6 @@ SOURCES += \
     compiler/Lexical.cpp \
     compiler/Parser.cpp \
     type/Token.cpp \
-    util/Thread.cpp \
     util/Util.cpp \
     compiler/Semantic.cpp \
     type/SymbolTable.cpp \
@@ -48,11 +47,9 @@ HEADERS += \
     type/tokentype.h \
     type/TreeNode.h \
     type/TreeNodeType.h \
-    util/Thread.h \
     util/Util.h \
     compiler/Semantic.h \
-    type/SymbolTable.h \
-    util/control.h
+    type/SymbolTable.h
 
 FORMS += \
         mainwindow.ui
