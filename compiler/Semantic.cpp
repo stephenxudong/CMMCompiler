@@ -887,8 +887,13 @@ string Semantic::expression(TreeNode *node)
             return to_string(i1-i2);
         else if(content==TokenType::MULTI)
             return to_string(i1*i2);
-        else
+        else{
+            if(i2==0){
+                emit output(QString::fromStdString("除数为0"));
+                return "nan";
+            }
             return to_string(i1/i2);
+        }
 
     }
     else{
@@ -900,8 +905,13 @@ string Semantic::expression(TreeNode *node)
             return to_string(i1-i2);
         else if(content==TokenType::MULTI)
             return to_string(i1*i2);
-        else
+        else{
+            if(abs(i2-0)<1e-6){
+                emit output(QString::fromStdString("除数为0"));
+                return "nan";
+            }
             return to_string(i1/i2);
+        }
     }
     return NULL_STRING;
 }

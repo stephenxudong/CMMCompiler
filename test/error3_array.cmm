@@ -7,8 +7,6 @@ int j=1,k=0;
 // illegal array index
 I[k-j] = -1;
 
-int a = j/(i-k);//divide zero!!!
-
 //array out_of_range
 while(i<7){
 	R[i] = i;

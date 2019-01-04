@@ -22,7 +22,6 @@ using namespace std;
 
 class TableNode{
 public:
-    int num;
     //元素的名字
     string name;
     //元素的类型
