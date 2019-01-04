@@ -1,27 +1,26 @@
-/**
-* 变量声明测试
-*
-* 测试变量声明是否合法 主要是：
-*     1.标识符是否满足 用例规范(以字母、
-*    数字、下划线组成，只能以字母开头
-*    ，且不能以下划线结束)
-*  2.在相同作用域内不允许出现同名变量
-*
-*
+//变量声明
+int integer_val;
+bool bool_val;
+real real_val;
+//数组声明
+int integerArray[4];
+bool boolArray[4];
+real realArray[4];
+/*多行注释
+   if、while、read、write语句
 */
-
-//声明变量i
-int i = -1;
-int i=0;
-while(i<>6){
-write(i);
-i=i+1;
+read(integer_val,bool_val,real_val);
+if(integer_val <> 0) {
+    integer_val = 4;
+    write(integer_val);
 }
-
-//相同作用域内定义同名变量
-int i=10;
-write(i);
-
-/*output
-*报错：变量i已被声明,请重命名该变量
-*///:~
+while(bool_val ==true) {
+    write(real_val);
+}
+//运算符
+integer_val = a + b - c * d / e;
+//非法标识符
+int _wrong,6wrong;
+//非法整数、实数
+int a = 009;
+real b = 00.009;
